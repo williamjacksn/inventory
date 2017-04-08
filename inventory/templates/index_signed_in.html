@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+
+{% block sign_in %}
+    <a class="btn btn-danger btn-block" href="{{ url_for('sign_out') }}" title="{{ session.profile.email }}">
+        <span class="glyphicon glyphicon-log-out"></span> Sign out ({{ session.profile.name }})
+    </a>
+{% endblock %}
+
+{% block content %}
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <h1>Current inventory</h1>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <a class="btn btn-default" href="{{ url_for('orders') }}"><span class="glyphicon glyphicon-shopping-cart"></span> Go to orders</a>
+            <a class="btn btn-default" href="{{ url_for('sales') }}"><span class="glyphicon glyphicon-usd"></span> Go to sales</a>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <table class="table" data-sortable>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>On order</th>
+                    <th>In stock</th>
+                    <th>Committed</th>
+                    <th>Available to sell</th>
+                    <th>Sold to date</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in c.inventory %}
+                    <tr>
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.item_category }}</td>
+                        <td>{{ item.qty_ordered }}</td>
+                        <td>{{ item.qty_received - item.qty_sold }}</td>
+                        <td>{{ item.qty_committed }}</td>
+                        <td>{{ item.qty_received - item.qty_sold - item.qty_committed }}</td>
+                        <td>{{ item.qty_sold }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

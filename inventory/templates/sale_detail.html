@@ -1,0 +1,133 @@
+{% extends 'index_signed_in.html' %}
+
+{% block title %}Inventory / Sale detail{% endblock %}
+
+{% block end_of_head %}<meta id="inventory_json_url" href="{{ url_for('inventory_json') }}">{% endblock %} #}
+
+{% block breadcrumb %}
+    <li><a href="{{ url_for('index') }}">Inventory</a></li>
+    <li><a href="{{ url_for('sales') }}">Sales</a></li>
+    <li class="active">Sale detail</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <h1>{{ c.sale.sale_created_at.date() }} / {{ c.sale.num_items }} item{{ 's' if c.sale.num_items != 1 }}</h1>
+            {% if c.sale.sale_customer %}<h4>for {{ c.sale.sale_customer }}</h4>{% endif %}
+            <p><a href="{{ url_for('sales') }}">&larr; back to all sales</a></p>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <form action="{{ url_for('sales_complete') }}" method="post">
+                <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-edit-sale">
+                    <span class="glyphicon glyphicon-edit"></span> Edit sale details
+                </button>
+                {% if not c.sale.sale_complete %}
+                    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-check"></span> Complete sale</button>
+                {% endif %}
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-delete-sale">
+                    <span class="glyphicon glyphicon-remove"></span> Cancel sale
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <table class="table" data-sortable>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in c.sale.sale_items|sort(attribute='item_name') %}
+                    <tr>
+                        <td>{{ i.item_name }}</td>
+                        <td>{{ i.item_category }}</td>
+                        <td>{{ i.quantity }}</td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                {% if not c.sale.sale_complete %}
+                <tfoot>
+                    <tr>
+                        <td>
+                            <form id="form-add-sale-item" method="post" action="{{ url_for('sales_add_item') }}">
+                                <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                                <input type="text" class="form-control" id="input_item_name" name="item_name" placeholder="Item name" required>
+                            </form>
+                        </td>
+                        <td>
+                            <input type="text" form="form-add-sale-item" class="form-control" name="item_category" placeholder="Category" readonly>
+                        </td>
+                        <td>
+                            <input type="number" form="form-add-sale-item" class="form-control" name="quantity" min="1" step="1" placeholder="1" required>
+                        </td>
+                        <td>
+                            <button type="submit" form="form-add-sale-item" class="btn btn-primary">Add item</button>
+                        </td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="modal-edit-sale">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Edit sale details</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form-edit-sale" action="{{ url_for('sales_set_details') }}" method="post">
+                        <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                        <div class="form-group">
+                            <label for="sale_created_at">Sale date</label>
+                            <input type="date" class="form-control" id="sale_created_at" name="sale_created_at" value="{{ c.sale.sale_created_at.date() }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sale_customer">Customer</label>
+                            <input type="text" class="form-control" id="sale_customer" name="sale_customer" value="{{ c.sale.sale_customer }}">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Discard changes</button>
+                    <button type="submit" class="btn btn-primary" form="form-edit-sale">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="modal-delete-sale">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are you sure you want to cancel this sale?</p>
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ url_for('sales_delete') }}" method="post">
+                        <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Keep sale</button>
+                        <button type="submit" class="btn btn-danger">Cancel sale</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block end_of_body %}
+    <script src="{{ url_for('static', filename='js/typeahead.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sale_detail.js') }}"></script>
+{% endblock %}

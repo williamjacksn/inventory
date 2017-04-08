@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Inventory{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sortable-theme-minimal.css') }}">
+    {% block end_of_head %}{% endblock %}
+</head>
+<body>
+<div class="container-fluid container-top">
+
+    <div class="row">
+        <div class="col-md-10">
+            <ol class="breadcrumb">
+            {% block breadcrumb %}
+                <li class="active">Inventory</li>
+            {% endblock %}
+            </ol>
+        </div>
+        <div class="col-md-2">{% block sign_in %}{% endblock %}</div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+</div>
+<script src="{{ url_for('static', filename='js/jquery-3.2.0.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sortable.min.js') }}"></script>
+{% block end_of_body %}{% endblock %}
+</body>
+</html>

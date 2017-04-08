@@ -1,0 +1,49 @@
+{% extends 'index_signed_in.html' %}
+
+{% block title %}Inventory / Orders{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{ url_for('index') }}">Inventory</a></li>
+    <li class="active">Orders</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <h1>Orders</h1>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <form action="{{ url_for('orders_new') }}" method="post">
+                <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> New order</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <table class="table" data-sortable>
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Note</th>
+                    <th>Items in order</th>
+                    <th>Received</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in c.orders %}
+                    <tr>
+                        <td><a href="{{ url_for('order_detail', order_id=order.order_id) }}">{{ order.order_created_at.date() }}</a></td>
+                        <td>{{ order.order_note }}</td>
+                        <td>{{ order.num_items }} <span class="text-muted"><em>{{ order.item_names }}</em></span></td>
+                        <td>{{ '' if order.waiting_to_receive else '✔' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

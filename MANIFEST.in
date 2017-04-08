@@ -1,0 +1,2 @@
+recursive-include inventory/static *
+recursive-include inventory/templates *
