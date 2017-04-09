@@ -7,7 +7,7 @@
 {% block breadcrumb %}
     <li><a href="{{ url_for('index') }}">Inventory</a></li>
     <li><a href="{{ url_for('orders') }}">Orders</a></li>
-    <li class="active">{{ c.order.num_items }} item{{ 's' if c.order.num_items != 1 }} on {{ c.order.order_created_at.date() }}</li>
+    <li class="active">Order detail</li>
 {% endblock %}
 
 {% block content %}
@@ -82,7 +82,7 @@
                         <td>
                             <form id="form-add-order-item" method="post" action="{{ url_for('orders_add_item') }}">
                                 <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
-                                <input type="text" class="form-control" id="input_item_name" name="item_name" placeholder="Item name" required>
+                                <input type="text" class="form-control" id="input_item_name" name="item_name" placeholder="Item name" required autofocus>
                             </form>
                         </td>
                         <td>

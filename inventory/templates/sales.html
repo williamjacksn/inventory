@@ -29,17 +29,21 @@
                 <tr>
                     <th>Sale date</th>
                     <th>Customer</th>
-                    <th>Items in sale</th>
-                    <th>Status</th>
+                    <th>Quantity</th>
+                    <th>Items</th>
+                    <th>Paid</th>
+                    <th>Delivered</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for sale in c.sales %}
-                    <tr>
+                    <tr class="{% if not sale.sale_paid %}bg-danger{% elif not sale.sale_delivered %}bg-warning{% endif %}">
                         <td><a href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">{{ sale.sale_created_at.date() }}</a></td>
                         <td>{{ sale.sale_customer }}</td>
-                        <td>{{ sale.num_items }} <span class="text-muted"><em>{{ sale.item_names }}</em></span></td>
-                        <td>{{ 'Complete' if sale.sale_complete else 'Pending' }}</td>
+                        <td>{{ sale.num_items }}</td>
+                        <td>{{ sale.item_names }}</td>
+                        <td>{{ '✔' if sale.sale_paid }}</td>
+                        <td>{{ '✔' if sale.sale_delivered }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

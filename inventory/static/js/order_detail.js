@@ -12,19 +12,17 @@ let item_name_source = new Bloodhound({
 
 function sg_template_item_name(sg) {
     let a = document.createElement('a');
-    a.setAttribute('role', 'button');
-    let p = document.createElement('p');
-    a.appendChild(p);
-    p.appendChild(document.createTextNode(sg.item_name.toString()));
+    a.setAttribute('href', '#');
+    a.appendChild(document.createTextNode(sg.item_name.toString()));
     return a;
 }
 
 $('#input_item_name').typeahead({
     classNames: {
         dataset: 'list-group',
-        menu: 'panel panel-default',
         suggestion: 'list-group-item'
-    }
+    },
+    highlight: true
 }, {
     display: 'item_name',
     limit: 10,
@@ -50,19 +48,17 @@ let item_category_source = new Bloodhound({
 
 function sg_template_item_category(sg) {
     let a = document.createElement('a');
-    a.setAttribute('role', 'button');
-    let p = document.createElement('p');
-    a.appendChild(p);
-    p.appendChild(document.createTextNode(sg.item_category.toString()));
+    a.setAttribute('href', '#');
+    a.appendChild(document.createTextNode(sg.item_category.toString()));
     return a;
 }
 
 $('#input_item_category').typeahead({
     classNames: {
         dataset: 'list-group',
-        menu: 'panel panel-default',
         suggestion: 'list-group-item'
-    }
+    },
+    highlight: true
 }, {
     display: 'item_category',
     limit: 10,

@@ -2,7 +2,10 @@
 
 {% block title %}Inventory / Sale detail{% endblock %}
 
-{% block end_of_head %}<meta id="inventory_json_url" href="{{ url_for('inventory_json') }}">{% endblock %} #}
+{% block end_of_head %}
+    <meta id="inventory_json_url" href="{{ url_for('inventory_json') }}">
+    <meta id="customers_json_url" href="{{ url_for('customers_json') }}">
+{% endblock %}
 
 {% block breadcrumb %}
     <li><a href="{{ url_for('index') }}">Inventory</a></li>
@@ -15,24 +18,22 @@
         <div class="col-md-12">
             <h1>{{ c.sale.sale_created_at.date() }} / {{ c.sale.num_items }} item{{ 's' if c.sale.num_items != 1 }}</h1>
             {% if c.sale.sale_customer %}<h4>for {{ c.sale.sale_customer }}</h4>{% endif %}
+            <h4>
+                {% if c.sale.sale_paid %}<span class="label label-success">✔ paid</span>{% else %}<span class="label label-danger">✘ not paid</span>{% endif %}
+                {% if c.sale.sale_delivered %}<span class="label label-success">✔ delivered</span>{% else %}<span class="label label-danger">✘ not delivered</span>{% endif %}
+            </h4>
             <p><a href="{{ url_for('sales') }}">&larr; back to all sales</a></p>
         </div>
     </div>
 
     <div class="row bump-top-padding">
         <div class="col-md-12">
-            <form action="{{ url_for('sales_complete') }}" method="post">
-                <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-edit-sale">
-                    <span class="glyphicon glyphicon-edit"></span> Edit sale details
-                </button>
-                {% if not c.sale.sale_complete %}
-                    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-check"></span> Complete sale</button>
-                {% endif %}
-                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-delete-sale">
-                    <span class="glyphicon glyphicon-remove"></span> Cancel sale
-                </button>
-            </form>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-edit-sale">
+                <span class="glyphicon glyphicon-edit"></span> Edit sale details
+            </button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-delete-sale">
+                <span class="glyphicon glyphicon-remove"></span> Cancel sale
+            </button>
         </div>
     </div>
 
@@ -98,6 +99,16 @@
                         <div class="form-group">
                             <label for="sale_customer">Customer</label>
                             <input type="text" class="form-control" id="sale_customer" name="sale_customer" value="{{ c.sale.sale_customer }}">
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="sale_paid" {% if c.sale.sale_paid %}checked{% endif %}> Customer paid
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="sale_delivered" {% if c.sale.sale_delivered %}checked{% endif %}> Product delivered
+                            </label>
                         </div>
                     </form>
                 </div>

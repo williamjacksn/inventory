@@ -61,6 +61,13 @@ def index():
     return flask.render_template('index_signed_in.html', c=c)
 
 
+@app.route('/customers.json')
+@login_required
+def customers_json():
+    profile = flask.session.get('profile')
+    return flask.jsonify(_get_db().get_customers({'user_email': profile.get('email')}))
+
+
 @app.route('/inventory.json')
 @login_required
 def inventory_json():
@@ -185,18 +192,6 @@ def sales_add_item():
     return flask.redirect(flask.url_for('sale_detail', sale_id=flask.request.form.get('sale_id')))
 
 
-@app.route('/sales/complete', methods=['POST'])
-@login_required
-def sales_complete():
-    profile = flask.session.get('profile')
-    params = {
-        'sale_id': flask.request.form.get('sale_id'),
-        'user_email': profile.get('email')
-    }
-    _get_db().complete_sale(params)
-    return flask.redirect(flask.url_for('sale_detail', sale_id=params.get('sale_id')))
-
-
 @app.route('/sales/delete', methods=['POST'])
 @login_required
 def sales_delete():
@@ -225,7 +220,9 @@ def sales_set_details():
         'user_email': profile.get('email'),
         'sale_id': flask.request.form.get('sale_id'),
         'sale_created_at': flask.request.form.get('sale_created_at'),
-        'sale_customer': flask.request.form.get('sale_customer')
+        'sale_customer': flask.request.form.get('sale_customer'),
+        'sale_paid': 'sale_paid' in flask.request.form,
+        'sale_delivered': 'sale_delivered' in flask.request.form
     }
     _get_db().set_sale_details(params)
     return flask.redirect(flask.url_for('sale_detail', sale_id=params.get('sale_id')))

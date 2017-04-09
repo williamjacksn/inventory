@@ -29,16 +29,18 @@
                 <tr>
                     <th>Date</th>
                     <th>Note</th>
-                    <th>Items in order</th>
+                    <th>Quantity</th>
+                    <th>Items</th>
                     <th>Received</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for order in c.orders %}
-                    <tr>
+                    <tr{% if order.waiting_to_receive %} class="bg-danger"{% endif %}>
                         <td><a href="{{ url_for('order_detail', order_id=order.order_id) }}">{{ order.order_created_at.date() }}</a></td>
                         <td>{{ order.order_note }}</td>
-                        <td>{{ order.num_items }} <span class="text-muted"><em>{{ order.item_names }}</em></span></td>
+                        <td>{{ order.num_items }}</td>
+                        <td>{{ order.item_names }}</td>
                         <td>{{ '' if order.waiting_to_receive else '✔' }}</td>
                     </tr>
                 {% endfor %}

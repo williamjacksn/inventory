@@ -99,18 +99,6 @@ class InventoryDatabase:
         self._u('INSERT INTO sales (sale_id, user_id) VALUES (%(sale_id)s, %(user_id)s)', params)
         return params.get('sale_id')
 
-    def complete_sale(self, params):
-        # params = {'user_email': 'user@example.com', 'sale_id': <uuid>}
-        sql = '''
-            SELECT sale_id
-            FROM sales JOIN users USING (user_id)
-            WHERE user_email = %(user_email)s AND sale_id = %(sale_id)s
-        '''
-        sale = self._q_one(sql, params)
-        if sale is None:
-            return
-        self._u('UPDATE sales SET sale_complete = TRUE WHERE sale_id = %(sale_id)s', params)
-
     def destroy(self):
         log.debug('Removing all tables and types from database')
         self._u('DROP TABLE IF EXISTS sale_items, order_items, sales, orders, items, users, flags CASCADE')
@@ -136,6 +124,15 @@ class InventoryDatabase:
         '''
         self._u(sql, params)
 
+    def get_customers(self, params):
+        # params = {'user_email': 'user@example.com'}
+        sql = '''
+            SELECT sale_customer
+            FROM sales JOIN users USING (user_id)
+            WHERE user_email = %(user_email)s AND char_length(sale_customer) > 0
+        '''
+        return [row['sale_customer'] for row in self._q(sql, params)]
+
     def get_inventory(self, params):
         # params = {'user_email': 'user@example.com'}
         sql = '''
@@ -148,8 +145,8 @@ class InventoryDatabase:
             LEFT JOIN order_items USING (item_id)
             LEFT JOIN (
                 SELECT item_id,
-                    sum(CASE WHEN sale_complete THEN 0 ELSE coalesce(sale_items.quantity, 0) END) qty_committed,
-                    sum(CASE WHEN sale_complete THEN sale_items.quantity ELSE 0 END) qty_sold
+                    sum(CASE WHEN sale_delivered THEN 0 ELSE coalesce(sale_items.quantity, 0) END) qty_committed,
+                    sum(CASE WHEN sale_delivered THEN sale_items.quantity ELSE 0 END) qty_sold
                 FROM items
                 JOIN users USING (user_id)
                 LEFT JOIN sale_items USING (item_id)
@@ -162,7 +159,7 @@ class InventoryDatabase:
         return self._q(sql, params)
 
     def get_or_add_item(self, params):
-        # params = {'item_name': 'An item', 'item_category': 'A category', 'user_id': <uuid>}
+        """params = {'item_name': 'An item', 'item_category': 'A category', 'user_id': <uuid>}"""
         sql = '''
             SELECT item_id FROM items
             WHERE item_name = %(item_name)s AND item_category = %(item_category)s AND user_id = %(user_id)s
@@ -189,11 +186,10 @@ class InventoryDatabase:
 
     def get_order(self, params):
         # params = {'user_email': 'user@example.com', 'order_id': <uuid>}
-        params.update(self.get_or_add_user(params))
         sql = '''
-            SELECT order_id, order_created_at, order_note, order_locked
-            FROM orders
-            WHERE order_id = %(order_id)s AND user_id = %(user_id)s
+            SELECT order_id, order_created_at, coalesce(order_note, '') order_note, order_locked
+            FROM orders JOIN users USING (user_id)
+            WHERE order_id = %(order_id)s AND user_email = %(user_email)s
         '''
         order = self._q_one(sql, params)
         if order is None:
@@ -213,7 +209,7 @@ class InventoryDatabase:
             SELECT order_id, order_created_at, coalesce(order_note, '') order_note,
                 coalesce(sum(quantity), 0) num_items,
                 bool_or(status = 'ordered') waiting_to_receive,
-                coalesce(string_agg(item_name, ', ' ORDER BY item_name), '') item_names
+                coalesce(string_agg(item_name || ' (' || quantity || ')', ', ' ORDER BY item_name), '') item_names
             FROM orders
             JOIN users USING (user_id)
             LEFT JOIN order_items USING (order_id)
@@ -228,7 +224,7 @@ class InventoryDatabase:
         # params = {'user_email': 'user@example.com', 'sale_id': <uuid>}
         params.update(self.get_or_add_user(params))
         sql = '''
-            SELECT sale_id, sale_created_at, sale_customer, sale_complete
+            SELECT sale_id, sale_created_at, sale_customer, sale_paid, sale_delivered
             FROM sales
             WHERE sale_id = %(sale_id)s AND user_id = %(user_id)s
         '''
@@ -248,14 +244,15 @@ class InventoryDatabase:
     def get_sales(self, params):
         # params = {'user_email': 'user@example.com'}
         sql = '''
-            SELECT sale_id, sale_created_at, sale_customer, sale_complete, coalesce(sum(quantity), 0) num_items,
-                coalesce(string_agg(item_name, ', ' ORDER BY item_name), '') item_names
+            SELECT sale_id, sale_created_at, sale_customer, sale_paid, sale_delivered,
+                coalesce(sum(quantity), 0) num_items,
+                coalesce(string_agg(item_name || ' (' || quantity || ')', ', ' ORDER BY item_name), '') item_names
             FROM sales
             JOIN users USING (user_id)
             LEFT JOIN sale_items USING (sale_id)
             LEFT JOIN items USING (item_id)
             WHERE user_email= %(user_email)s
-            GROUP BY sale_id, sale_created_at, sale_customer, sale_complete
+            GROUP BY sale_id, sale_created_at, sale_customer, sale_paid, sale_delivered
         '''
         return self._q(sql, params)
 
@@ -295,7 +292,7 @@ class InventoryDatabase:
                     user_id UUID REFERENCES users,
                     order_created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
                     order_locked BOOLEAN NOT NULL DEFAULT FALSE,
-                    order_note TEXT
+                    order_note TEXT DEFAULT ''
                 )
             ''')
             self._u('''
@@ -304,7 +301,8 @@ class InventoryDatabase:
                     user_id UUID REFERENCES users,
                     sale_created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
                     sale_customer TEXT DEFAULT '',
-                    sale_complete BOOLEAN NOT NULL DEFAULT FALSE
+                    sale_paid BOOLEAN NOT NULL DEFAULT FALSE,
+                    sale_delivered BOOLEAN NOT NULL DEFAULT FALSE
                 )
             ''')
             self._u('''
@@ -373,7 +371,8 @@ class InventoryDatabase:
 
     def set_sale_details(self, params):
         # params = {
-        #   'user_email': 'user@example.com', 'sale_id': <uuid>, 'sale_created_at': <date>, 'sale_customer': 'Name'
+        #   'user_email': 'user@example.com', 'sale_id': <uuid>, 'sale_created_at': <date>, 'sale_customer': 'Name',
+        #   'sale_paid': True, 'sale_delivered': True
         # }
         sql = '''
             SELECT sale_id
@@ -385,7 +384,9 @@ class InventoryDatabase:
             return
         sql = '''
             UPDATE sales
-            SET sale_created_at = %(sale_created_at)s, sale_customer = %(sale_customer)s
+            SET sale_created_at = %(sale_created_at)s,
+                sale_customer = %(sale_customer)s,
+                sale_paid = %(sale_paid)s, sale_delivered = %(sale_delivered)s
             WHERE sale_id = %(sale_id)s
         '''
         self._u(sql, params)
