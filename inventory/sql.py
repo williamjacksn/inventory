@@ -3,8 +3,6 @@ import psycopg2
 import psycopg2.extras
 import uuid
 
-from typing import Dict
-
 log = logging.getLogger(__name__)
 psycopg2.extras.register_uuid()
 
@@ -90,7 +88,7 @@ class InventoryDatabase:
             '''
         self._u(sql, params)
 
-    def add_order(self, params: Dict) -> uuid.UUID:
+    def add_order(self, params):
         # params = {'user_email': 'user@example.com'}
         params['order_id'] = uuid.uuid4()
         params.update(self.get_or_add_user(params))
