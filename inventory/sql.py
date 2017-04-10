@@ -33,20 +33,24 @@ class InventoryDatabase:
             c.execute(sql, args)
             return c.rowcount
 
-    def add_item_to_order(self, params):
-        # params = {
-        #   'order_id': <uuid>, 'user_email': 'user@example.com', 'item_name': 'An item', 'item_category': 'A category',
-        #   'quantity': 1
-        # }
+    def _valid_order(self, params):
+        # params = {'order_id': <uuid>, 'user_email': 'user@example.com'}
         sql = '''
             SELECT order_id
             FROM orders JOIN users USING (user_id)
             WHERE order_id = %(order_id)s AND user_email = %(user_email)s
         '''
         order = self._q_one(sql, params)
-        if order is None:
+        return order is not None
+
+    def add_item_to_order(self, params):
+        # params = {
+        #   'order_id': <uuid>, 'user_email': 'user@example.com', 'item_name': 'An item', 'item_category': 'A category',
+        #   'quantity': 1
+        # }
+        if not self._valid_order(params):
             return
-        params.update(self.get_or_add_user(params))
+
         params['item_id'] = self.get_or_add_item(params)
         sql = 'SELECT order_id, item_id FROM order_items WHERE order_id = %(order_id)s AND item_id = %(item_id)s'
         existing = self._q_one(sql, params)
@@ -102,9 +106,7 @@ class InventoryDatabase:
     def destroy(self):
         log.debug('Removing all tables and types from database')
         self._u('DROP TABLE IF EXISTS sale_items, order_items, sales, orders, items, users, flags CASCADE')
-        self._u('''
-            DROP TYPE IF EXISTS user_level_enum, order_item_status_enum CASCADE
-        ''')
+        self._u('DROP TYPE IF EXISTS user_level_enum, order_item_status_enum CASCADE')
 
     def delete_order(self, params):
         # params = {'order_id': <uuid>, 'user_email': 'user@example.com'}
@@ -159,7 +161,7 @@ class InventoryDatabase:
         return self._q(sql, params)
 
     def get_or_add_item(self, params):
-        """params = {'item_name': 'An item', 'item_category': 'A category', 'user_id': <uuid>}"""
+        # params = {'item_name': 'An item', 'item_category': 'A category', 'user_id': <uuid>}
         sql = '''
             SELECT item_id FROM items
             WHERE item_name = %(item_name)s AND item_category = %(item_category)s AND user_id = %(user_id)s
@@ -326,27 +328,17 @@ class InventoryDatabase:
 
     def set_order_item_status(self, params):
         # params = {'user_email': 'user@example.com', 'order_id': <uuid>, 'item_id': <uuid>, 'status': 'received'}
-        sql = '''
-            SELECT order_id
-            FROM orders JOIN users USING (user_id)
-            WHERE user_email = %(user_email)s AND order_id = %(order_id)s
-        '''
-        order = self._q_one(sql, params)
-        if order is None:
+        if not self._valid_order(params):
             return
+
         sql = '''UPDATE order_items SET status = %(status)s WHERE order_id = %(order_id)s AND item_id = %(item_id)s'''
         self._u(sql, params)
 
     def set_order_lock(self, params):
         # params = {'user_email': 'user@example.com', 'order_id': <uuid>, 'order_locked': True/False}
-        sql = '''
-            SELECT order_id
-            FROM orders JOIN users USING (user_id)
-            WHERE user_email = %(user_email)s AND order_id = %(order_id)s
-        '''
-        order = self._q_one(sql, params)
-        if order is None:
+        if not self._valid_order(params):
             return
+
         sql = 'UPDATE orders SET order_locked = %(order_locked)s WHERE order_id = %(order_id)s'
         self._u(sql, params)
 
@@ -354,14 +346,9 @@ class InventoryDatabase:
         # params = {
         #   'user_email': 'user@example.com', 'order_id': <uuid>, 'order_created_at': <date>, 'order_note': 'text'
         # }
-        sql = '''
-            SELECT order_id
-            FROM orders JOIN users USING (user_id)
-            WHERE user_email = %(user_email)s AND order_id = %(order_id)s
-        '''
-        order = self._q_one(sql, params)
-        if order is None:
+        if not self._valid_order(params):
             return
+
         sql = '''
             UPDATE orders
             SET order_created_at = %(order_created_at)s, order_note = %(order_note)s
@@ -393,12 +380,8 @@ class InventoryDatabase:
 
     @property
     def version(self):
-        try:
-            row = self._q_one('SELECT flag_int from flags where flag_name = %s', ['db_version'])
-        except psycopg2.ProgrammingError as e:
-            if e.diag.message_primary == 'relation "flags" does not exist':
-                return 0
-            raise
+        row = self._q_one('SELECT 1 FROM pg_tables WHERE tablename = %s', ['flags'])
         if row is None:
             return 0
+        row = self._q_one('SELECT flag_int FROM flags WHERE flag_name = %s', ['db_version'])
         return row.get('flag_int')
