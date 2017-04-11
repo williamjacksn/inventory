@@ -38,15 +38,17 @@
                 </thead>
                 <tbody>
                 {% for item in c.inventory %}
+                    {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_active %}
+                    {% set qty_available = qty_in_stock - item.qty_committed %}
                     <tr>
                         <td>{{ item.item_name }}</td>
                         <td>{{ item.item_category }}</td>
                         <td>{{ item.qty_ordered }}</td>
-                        <td>{{ item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_current }}</td>
+                        <td>{{ qty_in_stock }}</td>
                         <td>{{ item.qty_committed }}</td>
-                        <td>{{ item.qty_received - item.qty_sold - item.qty_committed - item.qty_sample_used - item.qty_sample_current }}</td>
+                        <td>{{ qty_available }}</td>
                         <td>{{ item.qty_sold }}</td>
-                        <td>{{ item.qty_sample_current }}</td>
+                        <td>{{ item.qty_sample_active }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -58,7 +60,7 @@
         <div class="col-xs-12">
             <ul class="list-group">
             {% for item in c.inventory %}
-                {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_current %}
+                {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_active %}
                 {% set qty_available = qty_in_stock - item.qty_committed %}
                 <li class="list-group-item">
                     <h4 class="list-group-item-heading">{{ item.item_name }} <small>{{ item.item_category }}</small></h4>
@@ -68,7 +70,7 @@
                         <span class="text-nowrap {{ 'text-muted' if item.qty_committed < 1 }}">{{ item.qty_committed }} committed,</span>
                         <span class="text-nowrap {{ 'text-muted' if qty_available < 1 }}">{{ qty_available }} available to sell,</span>
                         <span class="text-nowrap {{ 'text-muted' if item.qty_sold < 1 }}">{{ item.qty_sold }} sold to date,</span>
-                        <span class="text-nowrap {{ 'text-muted' if item.qty_sample_current < 1 }}">{{ item.qty_sample_current }} samples</span>
+                        <span class="text-nowrap {{ 'text-muted' if item.qty_sample_active < 1 }}">{{ item.qty_sample_active }} sample{{ 's' if item.qty_sample_active != 1 }}</span>
                     </p>
                 </li>
             {% else %}

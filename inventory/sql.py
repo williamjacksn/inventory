@@ -161,9 +161,7 @@ class InventoryDatabase:
             SELECT item_id, item_name, item_category,
                 sum(CASE order_items.status WHEN 'ordered' THEN order_items.quantity ELSE 0 END ) qty_ordered,
                 sum(CASE order_items.status WHEN 'received' THEN order_items.quantity ELSE 0 END ) qty_received,
-                qty_committed, qty_sold,
-                sum(CASE WHEN sample_used THEN coalesce(samples.quantity, 0) ELSE 0 END) qty_sample_used,
-                sum(CASE WHEN sample_used THEN 0 ELSE coalesce(samples.quantity, 0) END) qty_sample_current
+                qty_committed, qty_sold, qty_sample_active, qty_sample_used
             FROM items
             JOIN users USING (user_id)
             LEFT JOIN order_items USING (item_id)
@@ -172,13 +170,18 @@ class InventoryDatabase:
                     sum(CASE WHEN sale_delivered THEN 0 ELSE coalesce(sale_items.quantity, 0) END) qty_committed,
                     sum(CASE WHEN sale_delivered THEN sale_items.quantity ELSE 0 END) qty_sold
                 FROM items
-                JOIN users USING (user_id)
                 LEFT JOIN sale_items USING (item_id)
                 LEFT JOIN sales USING (sale_id)
                 GROUP BY item_id) sale_quantities USING (item_id)
-            LEFT JOIN samples USING (item_id)
+            LEFT JOIN (
+                SELECT item_id,
+                    sum(CASE WHEN sample_used THEN samples.quantity ELSE 0 END) qty_sample_used,
+                    sum(CASE WHEN sample_used THEN 0 ELSE coalesce(samples.quantity, 0) END) qty_sample_active
+                FROM items
+                LEFT JOIN samples USING (item_id)
+                GROUP BY item_id) sample_quantities USING (item_id)
             WHERE user_email = %(user_email)s
-            GROUP BY item_id, item_name, item_category, qty_committed, qty_sold
+            GROUP BY item_id, item_name, item_category, qty_committed, qty_sold, qty_sample_active, qty_sample_used
             ORDER BY item_name
         '''
         return self._q(sql, params)

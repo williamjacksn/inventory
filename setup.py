@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='inventory',
-    version='1.0.3',
+    version='1.0.4',
     description='A basic inventory management web app',
     install_requires=['Flask', 'Flask-OAuth2-Login', 'Flask-SSLify', 'psycopg2', 'waitress'],
     packages=['inventory'],

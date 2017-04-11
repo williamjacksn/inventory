@@ -68,12 +68,20 @@
             {% for sample in c.samples %}
                 <li class="list-group-item">
                     <h4 class="list-group-item-heading">{{ sample.quantity }} {{ sample.item_name }} <small>{{ sample.item_category }}</small></h4>
-                    <p class="list-group-item-text">
+                    <p>
                     {% if sample.sample_used %}
                         <span class="label label-default">used</span>
                     {% else %}
                         <span class="label label-success">active</span>
                     {% endif %}
+                    </p>
+                    <form action="{{ url_for('samples_delete') }}" method="post">
+                        <input type="hidden" name="sample_id" value="{{ sample.sample_id }}">
+                        {% if not sample.sample_used %}
+                            <button type="submit" class="btn btn-warning" formaction="{{ url_for('samples_use') }}">Mark as used</button>
+                        {% endif %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </li>
             {% else %}
                 <li class="list-group-item">No samples</li>
