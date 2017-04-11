@@ -11,6 +11,7 @@
     <div class="row bump-top-padding">
         <div class="col-md-12">
             <h1>Orders</h1>
+            <p><a href="{{ url_for('index') }}">&larr; back to inventory</a></p>
         </div>
     </div>
 
@@ -22,7 +23,7 @@
         </div>
     </div>
 
-    <div class="row bump-top-padding">
+    <div class="row bump-top-padding hidden-xs">
         <div class="col-md-12">
             <table class="table" data-sortable>
                 <thead>
@@ -46,6 +47,24 @@
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding visible-xs-block">
+        <div class="col-xs-12">
+            <div class="list-group">
+            {% for order in c.orders %}
+                <a class="list-group-item {% if order.waiting_to_receive %}list-group-item-danger{% endif %}" href="{{ url_for('order_detail', order_id=order.order_id) }}">
+                    <h4 class="list-group-item-heading">{{ order.order_created_at.date() }} <small>{{ order.order_note }}</small></h4>
+                    <p><strong>{{ order.num_items }} item{{ 's' if order.num_items != 1 }}{{ ':' if order.num_items > 0 }}</strong> {{ order.item_names }}</p>
+                    <p class="list-group-item-text">
+                    {% if order.waiting_to_receive %}<span class="label label-danger">✘ waiting to receive</span>{% else %}<span class="label label-success">✔ received</span>{% endif %}
+                    </p>
+                </a>
+            {% else %}
+                <a class="list-group-item">No orders</a>
+            {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}

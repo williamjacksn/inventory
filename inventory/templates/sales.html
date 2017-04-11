@@ -11,6 +11,7 @@
     <div class="row bump-top-padding">
         <div class="col-md-12">
             <h1>Sales</h1>
+            <p><a href="{{ url_for('index') }}">&larr; back to inventory</a></p>
         </div>
     </div>
 
@@ -22,7 +23,7 @@
         </div>
     </div>
 
-    <div class="row bump-top-padding">
+    <div class="row bump-top-padding hidden-xs">
         <div class="col-md-12">
             <table class="table" data-sortable>
                 <thead>
@@ -48,6 +49,25 @@
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding visible-xs-block">
+        <div class="col-xs-12">
+            <div class="list-group">
+            {% for sale in c.sales %}
+                <a class="list-group-item" href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">
+                    <h4 class="list-group-item-heading">{{ sale.sale_created_at.date() }} <small>for {{ sale.sale_customer }}</small></h4>
+                    <p><strong>{{ sale.num_items }} item{{ 's' if sale.num_items != 1 }}{{ ':' if sale.num_items > 0 }}</strong> {{ sale.item_names }}</p>
+                    <p class="list-group-item-text">
+                    {% if sale.sale_paid %}<span class="label label-success">✔ paid</span>{% else %}<span class="label label-danger">✘ not paid</span>{% endif %}
+                    {% if sale.sale_delivered %}<span class="label label-success">✔ delivered</span>{% else %}<span class="label label-danger">✘ not delivered</span>{% endif %}
+                    </p>
+                </a>
+            {% else %}
+                <a class="list-group-item">No sales</a>
+            {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}

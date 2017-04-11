@@ -17,7 +17,7 @@ function sg_template_item_name(sg) {
     return a;
 }
 
-$('#item_name').typeahead({
+$('.item-name-typeahead').typeahead({
     classNames: {
         dataset: 'list-group',
         suggestion: 'list-group-item'
@@ -52,7 +52,7 @@ function sg_template_item_category(sg) {
     return a;
 }
 
-$('#item_category').typeahead({
+$('.item-category-typeahead').typeahead({
     classNames: {
         dataset: 'list-group',
         suggestion: 'list-group-item'

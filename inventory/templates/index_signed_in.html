@@ -15,13 +15,13 @@
 
     <div class="row bump-top-padding">
         <div class="col-md-12">
-            <a class="btn btn-default" href="{{ url_for('orders') }}"><span class="glyphicon glyphicon-shopping-cart"></span> Go to orders</a>
-            <a class="btn btn-default" href="{{ url_for('sales') }}"><span class="glyphicon glyphicon-usd"></span> Go to sales</a>
-            <a class="btn btn-default" href="{{ url_for('samples') }}"><span class="glyphicon glyphicon-leaf"></span> Go to samples</a>
+            <a class="btn btn-default" href="{{ url_for('orders') }}"><span class="glyphicon glyphicon-shopping-cart"></span> Orders</a>
+            <a class="btn btn-default" href="{{ url_for('sales') }}"><span class="glyphicon glyphicon-usd"></span> Sales</a>
+            <a class="btn btn-default" href="{{ url_for('samples') }}"><span class="glyphicon glyphicon-leaf"></span> Samples</a>
         </div>
     </div>
 
-    <div class="row bump-top-padding">
+    <div class="row bump-top-padding hidden-xs">
         <div class="col-md-12">
             <table class="table" data-sortable>
                 <thead>
@@ -51,6 +51,30 @@
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding visible-xs-block">
+        <div class="col-xs-12">
+            <ul class="list-group">
+            {% for item in c.inventory %}
+                {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_current %}
+                {% set qty_available = qty_in_stock - item.qty_committed %}
+                <li class="list-group-item">
+                    <h4 class="list-group-item-heading">{{ item.item_name }} <small>{{ item.item_category }}</small></h4>
+                    <p class="list-group-item-text">
+                        <span class="text-nowrap {{ 'text-muted' if item.qty_ordered < 1 }}">{{ item.qty_ordered }} on order,</span>
+                        <span class="text-nowrap {{ 'text-muted' if qty_in_stock < 1 }}">{{ qty_in_stock }} in stock,</span>
+                        <span class="text-nowrap {{ 'text-muted' if item.qty_committed < 1 }}">{{ item.qty_committed }} committed,</span>
+                        <span class="text-nowrap {{ 'text-muted' if qty_available < 1 }}">{{ qty_available }} available to sell,</span>
+                        <span class="text-nowrap {{ 'text-muted' if item.qty_sold < 1 }}">{{ item.qty_sold }} sold to date,</span>
+                        <span class="text-nowrap {{ 'text-muted' if item.qty_sample_current < 1 }}">{{ item.qty_sample_current }} samples</span>
+                    </p>
+                </li>
+            {% else %}
+                <li class="list-group-item">No items</li>
+            {% endfor %}
+            </ul>
         </div>
     </div>
 {% endblock %}

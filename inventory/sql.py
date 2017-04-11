@@ -222,8 +222,9 @@ class InventoryDatabase:
             return
         sql = '''
             SELECT item_id, item_name, item_category, quantity, status
-            FROM order_items
-            LEFT JOIN items USING (item_id) WHERE order_id = %(order_id)s
+            FROM order_items LEFT JOIN items USING (item_id)
+            WHERE order_id = %(order_id)s
+            ORDER BY item_name
         '''
         order['order_items'] = self._q(sql, params)
         order['num_items'] = sum([i.get('quantity') for i in order.get('order_items')])
@@ -259,9 +260,9 @@ class InventoryDatabase:
             return
         sql = '''
             SELECT item_id, item_name, item_category, quantity
-            FROM sale_items
-            LEFT JOIN items USING (item_id)
+            FROM sale_items LEFT JOIN items USING (item_id)
             WHERE sale_id = %(sale_id)s
+            ORDER BY item_name
         '''
         sale['sale_items'] = self._q(sql, params)
         sale['num_items'] = sum([i.get('quantity') for i in sale['sale_items']])
