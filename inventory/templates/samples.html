@@ -1,0 +1,79 @@
+{% extends 'index_signed_in.html' %}
+
+{% block title %}Inventory / Samples{% endblock %}
+
+{% block end_of_head %}
+    <meta id="inventory_json_url" href="{{ url_for('inventory_json') }}">
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{ url_for('index') }}">Inventory</a></li>
+    <li class="active">Samples</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <h1>Samples</h1>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <table class="table" data-sortable>
+                <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Used</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for sample in c.samples %}
+                    <tr{% if sample.sample_used %} class="text-muted"{% endif %}>
+                        <td>{{ sample.item_name }}</td>
+                        <td>{{ sample.item_category }}</td>
+                        <td>{{ sample.quantity }}</td>
+                        <td>{{ '✔' if sample.sample_used }}</td>
+                        <td>
+                            <form action="{{ url_for('samples_delete') }}" method="post">
+                                <input type="hidden" name="sample_id" value="{{ sample.sample_id }}">
+                                {% if not sample.sample_used %}
+                                    <button type="submit" class="btn btn-warning btn-xs" formaction="{{ url_for('samples_use') }}">Mark as used</button>
+                                {% endif %}
+                                <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td>
+                        <form id="form-add-sample" action="{{ url_for('samples_new') }}" method="post">
+                            <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Item name" required>
+                        </form>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" form="form-add-sample" id="item_category" name="item_category" placeholder="Category" required>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" form="form-add-sample" id="quantity" name="quantity" min="1" step="1" title="Quantity" required>
+                    </td>
+                    <td></td>
+                    <td>
+                        <button type="submit" form="form-add-sample" class="btn btn-primary">Add sample</button>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block end_of_body %}
+    <script src="{{ url_for('static', filename='js/typeahead.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/item_typeahead.js') }}"></script>
+{% endblock %}

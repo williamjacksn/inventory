@@ -118,7 +118,7 @@ def orders_new():
     return flask.redirect(flask.url_for('order_detail', order_id=order_id))
 
 
-@app.route('/orders/set_details',methods=['POST'])
+@app.route('/orders/set_details', methods=['POST'])
 @login_required
 def orders_set_details():
     profile = flask.session.get('profile')
@@ -236,6 +236,49 @@ def sale_detail(sale_id):
     if sale is None:
         flask.abort(404)
     return flask.render_template('sale_detail.html', c={'sale': sale})
+
+
+@app.route('/samples')
+@login_required
+def samples():
+    profile = flask.session.get('profile')
+    c = {'samples': _get_db().get_samples({'user_email': profile.get('email')})}
+    return flask.render_template('samples.html', c=c)
+
+
+@app.route('/samples/delete', methods=['POST'])
+@login_required
+def samples_delete():
+    profile = flask.session.get('profile')
+    _get_db().delete_sample({'user_email': profile.get('email'), 'sample_id': flask.request.form.get('sample_id')})
+    return flask.redirect(flask.url_for('samples'))
+
+
+@app.route('/samples/new', methods=['POST'])
+@login_required
+def samples_new():
+    profile = flask.session.get('profile')
+    params = {
+        'user_email': profile.get('email'),
+        'item_name': flask.request.form.get('item_name'),
+        'item_category': flask.request.form.get('item_category'),
+        'quantity': flask.request.form.get('quantity')
+    }
+    _get_db().add_sample(params)
+    return flask.redirect(flask.url_for('samples'))
+
+
+@app.route('/samples/use', methods=['POST'])
+@login_required
+def samples_use():
+    profile = flask.session.get('profile')
+    params = {
+        'user_email': profile.get('email'),
+        'sample_id': flask.request.form.get('sample_id'),
+        'sample_used': True
+    }
+    _get_db().set_sample_used(params)
+    return flask.redirect(flask.url_for('samples'))
 
 
 @app.route('/sign_out')

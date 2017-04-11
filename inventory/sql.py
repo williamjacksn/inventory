@@ -41,6 +41,15 @@ class InventoryDatabase:
         order = self._q_one(sql, params)
         return order is not None
 
+    def _valid_sample(self, params):
+        # params = {'sample_id': <uuid>, 'user_email': 'user@example.com'}
+        sql = '''
+            SELECT sample_id
+            FROM samples JOIN items USING (item_id) JOIN users USING (user_id)
+            WHERE sample_id = %(sample_id)s AND user_email = %(user_email)s
+        '''
+        return self._q_one(sql, params) is not None
+
     def add_item_to_order(self, params):
         # params = {
         #   'order_id': <uuid>, 'user_email': 'user@example.com', 'item_name': 'An item', 'item_category': 'A category',
@@ -101,6 +110,13 @@ class InventoryDatabase:
         self._u('INSERT INTO sales (sale_id, user_id) VALUES (%(sale_id)s, %(user_id)s)', params)
         return params.get('sale_id')
 
+    def add_sample(self, params):
+        # params = {'user_email': 'user@example.com', 'item_name': 'Item', 'item_category': 'Category', 'quantity': 1}
+        params['item_id'] = self.get_or_add_item(params)
+        params['sample_id'] = uuid.uuid4()
+        sql = 'INSERT INTO samples (sample_id, item_id, quantity) VALUES (%(sample_id)s, %(item_id)s, %(quantity)s)'
+        self._u(sql, params)
+
     def destroy(self):
         log.debug('Removing all tables and types from database')
         self._u('DROP TABLE IF EXISTS sale_items, order_items, sales, orders, items, users, flags CASCADE')
@@ -124,6 +140,12 @@ class InventoryDatabase:
         '''
         self._u(sql, params)
 
+    def delete_sample(self, params):
+        # params = {'user_email': 'user@example.com', 'sample_id': <uuid>}
+        if not self._valid_sample(params):
+            return
+        self._u('DELETE FROM samples WHERE sample_id = %(sample_id)s', params)
+
     def get_customers(self, params):
         # params = {'user_email': 'user@example.com'}
         sql = '''
@@ -139,7 +161,9 @@ class InventoryDatabase:
             SELECT item_id, item_name, item_category,
                 sum(CASE order_items.status WHEN 'ordered' THEN order_items.quantity ELSE 0 END ) qty_ordered,
                 sum(CASE order_items.status WHEN 'received' THEN order_items.quantity ELSE 0 END ) qty_received,
-                qty_committed, qty_sold
+                qty_committed, qty_sold,
+                sum(CASE WHEN sample_used THEN coalesce(samples.quantity, 0) ELSE 0 END) qty_sample_used,
+                sum(CASE WHEN sample_used THEN 0 ELSE coalesce(samples.quantity, 0) END) qty_sample_current
             FROM items
             JOIN users USING (user_id)
             LEFT JOIN order_items USING (item_id)
@@ -152,6 +176,7 @@ class InventoryDatabase:
                 LEFT JOIN sale_items USING (item_id)
                 LEFT JOIN sales USING (sale_id)
                 GROUP BY item_id) sale_quantities USING (item_id)
+            LEFT JOIN samples USING (item_id)
             WHERE user_email = %(user_email)s
             GROUP BY item_id, item_name, item_category, qty_committed, qty_sold
             ORDER BY item_name
@@ -159,13 +184,14 @@ class InventoryDatabase:
         return self._q(sql, params)
 
     def get_or_add_item(self, params):
-        # params = {'item_name': 'An item', 'item_category': 'A category', 'user_id': <uuid>}
+        # params = {'item_name': 'An item', 'item_category': 'A category', 'user_email': 'user@example.com'}
         sql = '''
-            SELECT item_id FROM items
-            WHERE item_name = %(item_name)s AND item_category = %(item_category)s AND user_id = %(user_id)s
+            SELECT item_id FROM items JOIN users USING (user_id)
+            WHERE item_name = %(item_name)s AND item_category = %(item_category)s AND user_email = %(user_email)s
         '''
         item = self._q_one(sql, params)
         if item is None:
+            params.update(self.get_or_add_user(params))
             params['item_id'] = uuid.uuid4()
             sql = '''
                 INSERT INTO items (item_id, user_id, item_name, item_category)
@@ -256,6 +282,16 @@ class InventoryDatabase:
         '''
         return self._q(sql, params)
 
+    def get_samples(self, params):
+        # params = {'user_email': 'user@example.com'}
+        sql = '''
+            SELECT sample_id, item_id, item_name, item_category, quantity, sample_used
+            FROM samples JOIN items USING (item_id) JOIN users USING (user_id)
+            WHERE user_email = %(user_email)s
+            ORDER BY sample_used, item_name
+        '''
+        return self._q(sql, params)
+
     def migrate(self):
         log.debug('Checking for database migrations')
         if self.version == 0:
@@ -322,6 +358,14 @@ class InventoryDatabase:
                     PRIMARY KEY (sale_id, item_id)
                 )
             ''')
+            self._u('''
+                CREATE TABLE IF NOT EXISTS samples (
+                    sample_id UUID PRIMARY KEY,
+                    item_id UUID REFERENCES items,
+                    quantity INT NOT NULL,
+                    sample_used BOOLEAN NOT NULL DEFAULT FALSE
+                )
+            ''')
             self._u('INSERT INTO flags (flag_name, flag_int) VALUES (%s, %s)', ['db_version', 1])
 
     def set_order_item_status(self, params):
@@ -374,6 +418,13 @@ class InventoryDatabase:
                 sale_paid = %(sale_paid)s, sale_delivered = %(sale_delivered)s
             WHERE sale_id = %(sale_id)s
         '''
+        self._u(sql, params)
+
+    def set_sample_used(self, params):
+        # params = {'sample_id': <uuid>, 'user_email': 'user@example.com', 'sample_used': True/False}
+        if not self._valid_sample(params):
+            return
+        sql = 'UPDATE samples SET sample_used = %(sample_used)s WHERE sample_id = %(sample_id)s'
         self._u(sql, params)
 
     @property

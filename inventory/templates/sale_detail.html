@@ -64,11 +64,11 @@
                         <td>
                             <form id="form-add-sale-item" method="post" action="{{ url_for('sales_add_item') }}">
                                 <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
-                                <input type="text" class="form-control" id="input_item_name" name="item_name" placeholder="Item name" required>
+                                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Item name" required>
                             </form>
                         </td>
                         <td>
-                            <input type="text" form="form-add-sale-item" class="form-control" name="item_category" placeholder="Category" readonly>
+                            <input type="text" form="form-add-sale-item" class="form-control" id="item_category" name="item_category" placeholder="Category" required>
                         </td>
                         <td>
                             <input type="number" form="form-add-sale-item" class="form-control" name="quantity" min="1" step="1" placeholder="1" required>
@@ -140,5 +140,6 @@
 
 {% block end_of_body %}
     <script src="{{ url_for('static', filename='js/typeahead.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/item_typeahead.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sale_detail.js') }}"></script>
 {% endblock %}

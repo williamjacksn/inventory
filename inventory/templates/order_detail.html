@@ -2,7 +2,9 @@
 
 {% block title %}Inventory / Order detail{% endblock %}
 
-{% block end_of_head %}<meta id="inventory_json_url" href="{{ url_for('inventory_json') }}">{% endblock %}
+{% block end_of_head %}
+    <meta id="inventory_json_url" href="{{ url_for('inventory_json') }}">
+{% endblock %}
 
 {% block breadcrumb %}
     <li><a href="{{ url_for('index') }}">Inventory</a></li>
@@ -82,11 +84,11 @@
                         <td>
                             <form id="form-add-order-item" method="post" action="{{ url_for('orders_add_item') }}">
                                 <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
-                                <input type="text" class="form-control" id="input_item_name" name="item_name" placeholder="Item name" required autofocus>
+                                <input type="text" class="form-control" id="item_name" name="item_name" placeholder="Item name" required autofocus>
                             </form>
                         </td>
                         <td>
-                            <input type="text" form="form-add-order-item" class="form-control" id="input_item_category" name="item_category" placeholder="Category" required>
+                            <input type="text" form="form-add-order-item" class="form-control" id="item_category" name="item_category" placeholder="Category" required>
                         </td>
                         <td>
                             <input type="number" form="form-add-order-item" class="form-control" name="quantity" min="1" step="1" placeholder="1" required>
@@ -148,5 +150,5 @@
 
 {% block end_of_body %}
     <script src="{{ url_for('static', filename='js/typeahead.bundle.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/order_detail.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/item_typeahead.js') }}"></script>
 {% endblock %}

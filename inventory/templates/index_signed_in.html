@@ -17,6 +17,7 @@
         <div class="col-md-12">
             <a class="btn btn-default" href="{{ url_for('orders') }}"><span class="glyphicon glyphicon-shopping-cart"></span> Go to orders</a>
             <a class="btn btn-default" href="{{ url_for('sales') }}"><span class="glyphicon glyphicon-usd"></span> Go to sales</a>
+            <a class="btn btn-default" href="{{ url_for('samples') }}"><span class="glyphicon glyphicon-leaf"></span> Go to samples</a>
         </div>
     </div>
 
@@ -32,6 +33,7 @@
                     <th>Committed</th>
                     <th>Available to sell</th>
                     <th>Sold to date</th>
+                    <th>Samples</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -40,10 +42,11 @@
                         <td>{{ item.item_name }}</td>
                         <td>{{ item.item_category }}</td>
                         <td>{{ item.qty_ordered }}</td>
-                        <td>{{ item.qty_received - item.qty_sold }}</td>
+                        <td>{{ item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_current }}</td>
                         <td>{{ item.qty_committed }}</td>
-                        <td>{{ item.qty_received - item.qty_sold - item.qty_committed }}</td>
+                        <td>{{ item.qty_received - item.qty_sold - item.qty_committed - item.qty_sample_used - item.qty_sample_current }}</td>
                         <td>{{ item.qty_sold }}</td>
+                        <td>{{ item.qty_sample_current }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

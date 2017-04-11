@@ -17,7 +17,7 @@ function sg_template_item_name(sg) {
     return a;
 }
 
-$('#input_item_name').typeahead({
+$('#item_name').typeahead({
     classNames: {
         dataset: 'list-group',
         suggestion: 'list-group-item'
@@ -32,8 +32,7 @@ $('#input_item_name').typeahead({
         suggestion: sg_template_item_name
     }
 }).on('typeahead:select', function (e, sg) {
-    let f = e.target.form;
-    f.item_category.value = sg.item_category;
+    e.target.form.item_category.value = sg.item_category;
 });
 
 let item_category_source = new Bloodhound({
@@ -53,7 +52,7 @@ function sg_template_item_category(sg) {
     return a;
 }
 
-$('#input_item_category').typeahead({
+$('#item_category').typeahead({
     classNames: {
         dataset: 'list-group',
         suggestion: 'list-group-item'
