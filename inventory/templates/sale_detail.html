@@ -64,7 +64,7 @@
                         <td>
                             <form id="form-add-sale-item" method="post" action="{{ url_for('sales_add_item') }}">
                                 <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
-                                <input type="text" class="form-control item-name-typeahead" id="item_name" name="item_name" placeholder="Item name" required>
+                                <input type="text" class="form-control item-name-typeahead" id="item_name" name="item_name" placeholder="Item name" required autofocus>
                             </form>
                         </td>
                         <td>
