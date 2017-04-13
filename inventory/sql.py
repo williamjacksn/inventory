@@ -122,6 +122,13 @@ class InventoryDatabase:
         self._u('DROP TABLE IF EXISTS sale_items, order_items, sales, orders, items, users, flags CASCADE')
         self._u('DROP TYPE IF EXISTS user_level_enum, order_item_status_enum CASCADE')
 
+    def delete_item_from_order(self, params):
+        # params = {'order_id': <uuid>, 'user_email': 'user@example.com', 'item_id': <uuid>}
+        if not self._valid_order(params):
+            return
+
+        self._u('DELETE FROM order_items WHERE order_id = %(order_id)s AND item_id = %(item_id)s', params)
+
     def delete_order(self, params):
         # params = {'order_id': <uuid>, 'user_email': 'user@example.com'}
         sql = '''

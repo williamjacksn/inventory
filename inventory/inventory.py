@@ -110,6 +110,19 @@ def orders_delete():
     return flask.redirect(flask.url_for('orders'))
 
 
+@app.route('/orders/delete_item', methods=['POST'])
+@login_required
+def orders_delete_item():
+    profile = flask.session.get('profile')
+    params = {
+        'user_email': profile.get('email'),
+        'order_id': flask.request.form.get('order_id'),
+        'item_id': flask.request.form.get('item_id')
+    }
+    _get_db().delete_item_from_order(params)
+    return flask.redirect(flask.url_for('order_detail', order_id=params.get('order_id')))
+
+
 @app.route('/orders/new', methods=['POST'])
 @login_required
 def orders_new():

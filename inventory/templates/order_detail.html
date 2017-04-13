@@ -55,6 +55,7 @@
                     <th>Category</th>
                     <th>Quantity</th>
                     <th></th>
+                    {% if not c.order.order_locked %}<th></th>{% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -77,6 +78,15 @@
                                 <span class="label label-warning">Cancelled</span>
                             {% endif %}
                         </td>
+                        {% if not c.order.order_locked %}
+                            <td>
+                                <form action="{{ url_for('orders_delete_item') }}" method="post">
+                                    <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                                    <input type="hidden" name="item_id" value="{{ i.item_id }}">
+                                    <button type="submit" class="btn btn-xs btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -98,6 +108,7 @@
                         <td>
                             <button type="submit" form="form-add-order-item" class="btn btn-primary">Add item</button>
                         </td>
+                        <td></td>
                     </tr>
                 </tfoot>
                 {% endif %}
@@ -110,6 +121,13 @@
             <ul class="list-group">
             {% for i in c.order.order_items %}
                 <li class="list-group-item">
+                    {% if not c.order.order_locked %}
+                        <form action="{{ url_for('orders_delete_item') }}" method="post">
+                            <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                            <input type="hidden" name="item_id" value="{{ i.item_id }}">
+                            <button type="submit" class="close">&times;</button>
+                        </form>
+                    {% endif %}
                     <h4 class="list-group-item-heading"><span class="text-muted">{{ i.quantity }}</span> {{ i.item_name }} <small>{{ i.item_category }}</small></h4>
                     {% if i.status == 'ordered' %}
                         <form action="{{ url_for('orders_set_item_status') }}" method="post">
