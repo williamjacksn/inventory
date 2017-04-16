@@ -122,6 +122,18 @@ class InventoryDatabase:
         self._u('DROP TABLE IF EXISTS sale_items, order_items, sales, orders, items, users, flags CASCADE')
         self._u('DROP TYPE IF EXISTS user_level_enum, order_item_status_enum CASCADE')
 
+    def delete_item(self, params):
+        # params = {'user_email': 'user@example.com', 'item_id': <uuid>}
+        sql = '''
+            SELECT item_id
+            FROM items JOIN users USING (user_id)
+            WHERE user_email = %(user_email)s AND item_id = %(item_id)s
+        '''
+        item = self._q_one(sql, params)
+        if item is None:
+            return
+        self._u('DELETE FROM items WHERE item_id = %(item_id)s', params)
+
     def delete_item_from_order(self, params):
         # params = {'order_id': <uuid>, 'user_email': 'user@example.com', 'item_id': <uuid>}
         if not self._valid_order(params):
@@ -192,6 +204,35 @@ class InventoryDatabase:
             ORDER BY item_name
         '''
         return self._q(sql, params)
+
+    def get_item_details(self, params):
+        # params = {'user_email': 'user@example.com', 'item_id': <uuid>}
+        sql = '''
+            SELECT item_id, item_name, item_category
+            FROM items JOIN users USING (user_id)
+            WHERE user_email = %(user_email)s AND item_id = %(item_id)s
+        '''
+        item = self._q_one(sql, params)
+        if item is None:
+            return
+        sql = '''
+            SELECT order_id, quantity, status, order_created_at, order_note
+            FROM order_items JOIN orders USING (order_id)
+            WHERE item_id = %(item_id)s
+        '''
+        item['orders'] = self._q(sql, params)
+        sql = '''
+            SELECT sale_id, quantity, sale_created_at, sale_customer, sale_paid, sale_delivered
+            FROM sale_items JOIN sales USING (sale_id)
+            WHERE item_id = %(item_id)s
+        '''
+        item['sales'] = self._q(sql, params)
+        sql = 'SELECT sample_id, quantity, sample_used FROM samples WHERE item_id = %(item_id)s'
+        item['samples'] = self._q(sql, params)
+        item['deletable'] = True
+        if any([item['orders'], item['sales'], item['samples']]):
+            item['deletable'] = False
+        return item
 
     def get_or_add_item(self, params):
         # params = {'item_name': 'An item', 'item_category': 'A category', 'user_email': 'user@example.com'}

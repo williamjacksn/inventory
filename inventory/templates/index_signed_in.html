@@ -41,7 +41,7 @@
                     {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_active %}
                     {% set qty_available = qty_in_stock - item.qty_committed %}
                     <tr>
-                        <td>{{ item.item_name }}</td>
+                        <td><a href="{{ url_for('item_detail', item_id=item.item_id) }}">{{ item.item_name }}</a></td>
                         <td>{{ item.item_category }}</td>
                         <td>{{ item.qty_ordered }}</td>
                         <td>{{ qty_in_stock }}</td>
@@ -58,11 +58,11 @@
 
     <div class="row bump-top-padding visible-xs-block">
         <div class="col-xs-12">
-            <ul class="list-group">
+            <div class="list-group">
             {% for item in c.inventory %}
                 {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_active %}
                 {% set qty_available = qty_in_stock - item.qty_committed %}
-                <li class="list-group-item">
+                <a class="list-group-item" href="{{ url_for('item_detail', item_id=item.item_id) }}">
                     <h4 class="list-group-item-heading">{{ item.item_name }} <small>{{ item.item_category }}</small></h4>
                     <p class="list-group-item-text">
                         <span class="text-nowrap {{ 'text-muted' if item.qty_ordered < 1 }}">{{ item.qty_ordered }} on order,</span>
@@ -72,11 +72,11 @@
                         <span class="text-nowrap {{ 'text-muted' if item.qty_sold < 1 }}">{{ item.qty_sold }} sold to date,</span>
                         <span class="text-nowrap {{ 'text-muted' if item.qty_sample_active < 1 }}">{{ item.qty_sample_active }} sample{{ 's' if item.qty_sample_active != 1 }}</span>
                     </p>
-                </li>
+                </a>
             {% else %}
                 <li class="list-group-item">No items</li>
             {% endfor %}
-            </ul>
+            </div>
         </div>
     </div>
 {% endblock %}

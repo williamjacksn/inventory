@@ -75,6 +75,30 @@ def inventory_json():
     return flask.jsonify(_get_db().get_inventory({'user_email': profile.get('email')}))
 
 
+@app.route('/items/<item_id>')
+@login_required
+def item_detail(item_id):
+    profile = flask.session.get('profile')
+    params = {
+        'user_email': profile.get('email'),
+        'item_id': item_id
+    }
+    c = _get_db().get_item_details(params)
+    return flask.render_template('item_detail.html', c=c)
+
+
+@app.route('/items/delete', methods=['POST'])
+@login_required
+def items_delete():
+    profile = flask.session.get('profile')
+    params = {
+        'user_email': profile.get('email'),
+        'item_id': flask.request.form.get('item_id')
+    }
+    _get_db().delete_item(params)
+    return flask.redirect(flask.url_for('index'))
+
+
 @app.route('/orders')
 @login_required
 def orders():

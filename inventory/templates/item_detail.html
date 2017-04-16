@@ -1,0 +1,156 @@
+{% extends 'index_signed_in.html' %}
+
+{% block title %}Inventory / Item detail{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{ url_for('index') }}">Inventory</a></li>
+    <li class="active">Item detail</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <h1>{{ c.item_name }} <small>{{ c.item_category }}</small></h1>
+            <p><a href="{{ url_for('index') }}">&larr; back to inventory</a></p>
+        </div>
+    </div>
+
+    {% if c.deletable %}
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <form action="{{ url_for('items_delete') }}" method="post">
+                <input type="hidden" name="item_id" value="{{ c.item_id }}">
+                <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Delete item</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if c.orders %}
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <h2>Orders</h2>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <table class="table hidden-xs" data-sortable>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Note</th>
+                <th>Quantity</th>
+                <th>Received</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in c.orders %}
+                <tr>
+                    <td><a href="{{ url_for('order_detail', order_id=order.order_id) }}">{{ order.order_created_at.date() }}</a></td>
+                    <td>{{ order.order_note }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ '✔' if order.status != 'ordered' }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="list-group visible-xs-block">
+        {% for order in c.orders %}
+            <a class="list-group-item" href="{{ url_for('order_detail', order_id=order.order_id) }}">
+                <h4 class="list-group-item-heading">{{ order.order_created_at.date() }} <small>{{ order.order_note }}</small></h4>
+                <p>Quantity: {{ order.quantity }}</p>
+                <p class="list-group-item-text">
+                {% if order.status == 'ordered' %}
+                    <span class="label label-default">ordered</span>
+                {% elif order.status == 'received' %}
+                    <span class="label label-success">✔ received</span>
+                {% else %}
+                    <span class="label label-danger">✘ cancelled</span>
+                {% endif %}
+                </p>
+            </a>
+        {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if c.sales %}
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <h2>Sales</h2>
+        </div>
+    </div>
+
+    <div class="row bump-top-padding">
+        <table class="table hidden-xs" data-sortable>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Quantity</th>
+                <th>Paid</th>
+                <th>Delivered</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sale in c.sales %}
+                <tr>
+                    <td><a href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">{{ sale.sale_created_at.date() }}</a></td>
+                    <td>{{ sale.sale_customer }}</td>
+                    <td>{{ sale.quantity }}</td>
+                    <td>{{ '✔' if sale.sale_paid }}</td>
+                    <td>{{ '✔' if sale.sale_delivered }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="list-group visible-xs-block">
+        {% for sale in c.sales %}
+            <a class="list-group-item" href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">
+                <h4 class="list-group-item-heading">{{ sale.sale_created_at.date() }} <small>for {{ sale.sale_customer }}</small></h4>
+                <p>Quantity: {{ sale.quantity }}</p>
+                <p class="list-group-item-text">
+                {% if sale.sale_paid %}<span class="label label-success">✔ paid</span>{% else %}<span class="label label-danger">✘ not paid</span>{% endif %}
+                {% if sale.sale_delivered %}<span class="label label-success">✔ delivered</span>{% else %}<span class="label label-danger">✘ not delivered</span>{% endif %}
+                </p>
+            </a>
+        {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if c.samples %}
+    <div class="row bump-top-padding"><div class="col-md-12"><h2>Samples</h2></div></div>
+
+    <div class="row bump-top-padding">
+        <table class="table hidden-xs">
+            <thead>
+            <tr>
+                <th>Quantity</th>
+                <th>Used</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sample in c.samples %}
+                <tr>
+                    <td>{{ sample.quantity }}</td>
+                    <td> {{ '✔' if sample.sample_used }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <ul class="list-group visible-xs-block">
+        {% for sample in c.samples %}
+            <li class="list-group-item">
+                <p>Quantity: {{ sample.quantity }}</p>
+                <p class="list-group-item-text">
+                    {% if sample.sample_used %}<span class="label label-default">used</span>
+                    {% else %}<span class="label label-success">active</span>
+                    {% endif %}
+                </p>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+{% endblock %}
