@@ -73,9 +73,9 @@
                                     <button class="btn btn-xs btn-danger" name="status" value="cancelled">Cancel</button>
                                 </form>
                             {% elif i.status == 'received' %}
-                                <span class="label label-info">Received</span>
+                                <span class="label label-success">Received</span>
                             {% else %}
-                                <span class="label label-warning">Cancelled</span>
+                                <span class="label label-danger">Cancelled</span>
                             {% endif %}
                         </td>
                         {% if not c.order.order_locked %}
