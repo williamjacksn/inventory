@@ -331,6 +331,7 @@ class InventoryDatabase:
             LEFT JOIN items USING (item_id)
             WHERE user_email= %(user_email)s
             GROUP BY sale_id, sale_created_at, sale_customer, sale_paid, sale_delivered
+            ORDER BY sale_created_at DESC
         '''
         return self._q(sql, params)
 
