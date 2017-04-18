@@ -287,7 +287,8 @@ class InventoryDatabase:
             SELECT order_id, order_created_at, coalesce(order_note, '') order_note,
                 coalesce(sum(quantity), 0) num_items,
                 bool_or(status = 'ordered') waiting_to_receive,
-                coalesce(string_agg(item_name || ' (' || quantity || ')', ', ' ORDER BY item_name), '') item_names
+                json_agg(json_build_object('name', item_name, 'quantity', quantity, 'status', status)
+                         ORDER BY item_name) order_items
             FROM orders
             JOIN users USING (user_id)
             LEFT JOIN order_items USING (order_id)

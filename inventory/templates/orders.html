@@ -41,7 +41,15 @@
                         <td><a href="{{ url_for('order_detail', order_id=order.order_id) }}">{{ order.order_created_at.date() }}</a></td>
                         <td>{{ order.order_note }}</td>
                         <td>{{ order.num_items }}</td>
-                        <td>{{ order.item_names }}</td>
+                        <td>
+                        {% for item in order.order_items %}
+                            {% if item.status == 'ordered' %}<span class="label label-default">
+                            {% elif item.status == 'received' %}<span class="label label-success">
+                            {% else %}<span class="label label-danger">
+                            {% endif %}
+                            {{ item.name }} ({{ item.quantity }})</span>
+                        {% endfor %}
+                        </td>
                         <td>{{ '' if order.waiting_to_receive else '✔' }}</td>
                     </tr>
                 {% endfor %}
@@ -56,9 +64,14 @@
             {% for order in c.orders %}
                 <a class="list-group-item {% if order.waiting_to_receive %}list-group-item-danger{% endif %}" href="{{ url_for('order_detail', order_id=order.order_id) }}">
                     <h4 class="list-group-item-heading">{{ order.order_created_at.date() }} <small>{{ order.order_note }}</small></h4>
-                    <p><strong>{{ order.num_items }} item{{ 's' if order.num_items != 1 }}{{ ':' if order.num_items > 0 }}</strong> {{ order.item_names }}</p>
-                    <p class="list-group-item-text">
-                    {% if order.waiting_to_receive %}<span class="label label-danger">✘ waiting to receive</span>{% else %}<span class="label label-success">✔ received</span>{% endif %}
+                    <p class="list-group-item-text"><strong>{{ order.num_items }} item{{ 's' if order.num_items != 1 }}{{ ':' if order.num_items > 0 }}</strong>
+                        {% for item in order.order_items %}
+                            {% if item.status == 'ordered' %}<span class="label label-default">
+                            {% elif item.status == 'received' %}<span class="label label-success">
+                            {% else %}<span class="label label-danger">
+                            {% endif %}
+                            {{ item.name }} ({{ item.quantity }})</span>
+                        {% endfor %}
                     </p>
                 </a>
             {% else %}
