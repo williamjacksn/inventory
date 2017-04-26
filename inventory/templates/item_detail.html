@@ -61,11 +61,11 @@
                 <p>Quantity: {{ order.quantity }}</p>
                 <p class="list-group-item-text">
                 {% if order.status == 'ordered' %}
-                    <span class="label label-default">ordered</span>
+                    <span class="label label-danger">ordered</span>
                 {% elif order.status == 'received' %}
                     <span class="label label-success">✔ received</span>
                 {% else %}
-                    <span class="label label-danger">✘ cancelled</span>
+                    <span class="label label-default">✘ cancelled</span>
                 {% endif %}
                 </p>
             </a>
@@ -107,7 +107,7 @@
         <div class="list-group visible-xs-block">
         {% for sale in c.sales %}
             <a class="list-group-item" href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">
-                <h4 class="list-group-item-heading">{{ sale.sale_created_at.date() }} <small>for {{ sale.sale_customer }}</small></h4>
+                <h4 class="list-group-item-heading">{{ sale.sale_created_at.date() }}{% if sale.sale_customer %} <small>for {{ sale.sale_customer }}</small>{% endif %}</h4>
                 <p>Quantity: {{ sale.quantity }}</p>
                 <p class="list-group-item-text">
                 {% if sale.sale_paid %}<span class="label label-success">✔ paid</span>{% else %}<span class="label label-danger">✘ not paid</span>{% endif %}
