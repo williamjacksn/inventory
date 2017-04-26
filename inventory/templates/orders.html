@@ -43,9 +43,9 @@
                         <td>{{ order.num_items }}</td>
                         <td>
                         {% for item in order.order_items if item.name %}
-                            {% if item.status == 'ordered' %}<span class="label label-default">
+                            {% if item.status == 'ordered' %}<span class="label label-danger">
                             {% elif item.status == 'received' %}<span class="label label-success">
-                            {% else %}<span class="label label-danger">
+                            {% else %}<span class="label label-default">
                             {% endif %}
                             {{ item.name }} ({{ item.quantity }})</span>
                         {% endfor %}
@@ -66,9 +66,9 @@
                     <h4 class="list-group-item-heading">{{ order.order_created_at.date() }} <small>{{ order.order_note }}</small></h4>
                     <p class="list-group-item-text"><strong>{{ order.num_items }} item{{ 's' if order.num_items != 1 }}{{ ':' if order.num_items > 0 }}</strong>
                         {% for item in order.order_items if item.name %}
-                            {% if item.status == 'ordered' %}<span class="label label-default">
+                            {% if item.status == 'ordered' %}<span class="label label-danger">
                             {% elif item.status == 'received' %}<span class="label label-success">
-                            {% else %}<span class="label label-danger">
+                            {% else %}<span class="label label-default">
                             {% endif %}
                             {{ item.name }} ({{ item.quantity }})</span>
                         {% endfor %}

@@ -70,12 +70,12 @@
                                     <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
                                     <input type="hidden" name="item_id" value="{{ i.item_id }}">
                                     <button class="btn btn-xs btn-success" name="status" value="received">Receive</button>
-                                    <button class="btn btn-xs btn-danger" name="status" value="cancelled">Cancel</button>
+                                    <button class="btn btn-xs btn-default" name="status" value="cancelled">Cancel</button>
                                 </form>
                             {% elif i.status == 'received' %}
                                 <span class="label label-success">Received</span>
                             {% else %}
-                                <span class="label label-danger">Cancelled</span>
+                                <span class="label label-default">Cancelled</span>
                             {% endif %}
                         </td>
                         {% if not c.order.order_locked %}
@@ -134,12 +134,12 @@
                             <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
                             <input type="hidden" name="item_id" value="{{ i.item_id }}">
                             <button type="submit" class="btn btn-success" name="status" value="received">Receive</button>
-                            <button type="submit" class="btn btn-danger" name="status" value="cancelled">Cancel</button>
+                            <button type="submit" class="btn btn-default" name="status" value="cancelled">Cancel</button>
                         </form>
                     {% elif i.status == 'received' %}
                         <p class="list-group-item-text"><span class="label label-success">✔ received</span></p>
                     {% else %}
-                        <p class="list-group-item-text"><span class="label label-danger">✘ cancelled</span></p>
+                        <p class="list-group-item-text"><span class="label label-default">✘ cancelled</span></p>
                     {% endif %}
                 </li>
             {% endfor %}
