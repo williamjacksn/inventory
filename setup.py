@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='inventory',
-    version='1.0.7',
+    version='1.0.8',
     description='A basic inventory management web app',
     url='https://github.com/williamjacksn/inventory',
     author='William Jackson',

@@ -21,6 +21,17 @@
         </div>
     </div>
 
+    <div class="row bump-top-padding">
+        <div class="col-md-12">
+            <div class="form-inline">
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+                    <input class="form-control" type="text" placeholder="Filter by item name" id="filter-input" autofocus>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row bump-top-padding hidden-xs">
         <div class="col-md-12">
             <table class="table" data-sortable>
@@ -40,7 +51,7 @@
                 {% for item in c.inventory %}
                     {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_active %}
                     {% set qty_available = qty_in_stock - item.qty_committed %}
-                    <tr>
+                    <tr class="filter-candidate" data-filter-value="{{ item.filter_value }}">
                         <td><a href="{{ url_for('item_detail', item_id=item.item_id) }}">{{ item.item_name }}</a></td>
                         <td>{{ item.item_category }}</td>
                         <td>{{ item.qty_ordered }}</td>
@@ -62,7 +73,7 @@
             {% for item in c.inventory %}
                 {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_active %}
                 {% set qty_available = qty_in_stock - item.qty_committed %}
-                <a class="list-group-item" href="{{ url_for('item_detail', item_id=item.item_id) }}">
+                <a class="list-group-item filter-candidate" href="{{ url_for('item_detail', item_id=item.item_id) }}" data-filter-value="{{ item.filter_value }}">
                     <h4 class="list-group-item-heading">{{ item.item_name }} <small>{{ item.item_category }}</small></h4>
                     <p class="list-group-item-text">
                         <span class="text-nowrap {{ 'text-muted' if item.qty_ordered < 1 }}">{{ item.qty_ordered }} on order,</span>
@@ -79,4 +90,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block end_of_body %}
+    <script src="{{ url_for('static', filename='js/jquery.ba-throttle-debounce.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/filter.js') }}"></script>
 {% endblock %}

@@ -187,6 +187,7 @@ class InventoryDatabase:
         # params = {'user_email': 'user@example.com'}
         sql = '''
             SELECT item_id, item_name, item_category,
+                concat_ws(' ', lower(item_name), lower(item_category)) filter_value,
                 sum(CASE order_items.status WHEN 'ordered' THEN order_items.quantity ELSE 0 END ) qty_ordered,
                 sum(CASE order_items.status WHEN 'received' THEN order_items.quantity ELSE 0 END ) qty_received,
                 qty_committed, qty_sold, qty_sample_active, qty_sample_used
