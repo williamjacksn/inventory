@@ -14,7 +14,7 @@ def notify(change_list):
     log.info('Sending notification email to {}'.format(os.environ.get('NOTIFICATION_TO')))
     msg = email.message.EmailMessage()
     msg['Subject'] = 'Stock alert'
-    msg['From'] = os.environ.get('SMTP_USER')
+    msg['From'] = os.environ.get('NOTIFICATION_FROM')
     msg['Bcc'] = os.environ.get('NOTIFICATION_TO')
     msg.set_content('''Hello,
 
@@ -23,14 +23,14 @@ The following items recently changed status:
 {}
 
 (This is an automated message.)
-'''.format('\n\n'.join(change_list)))
+'''.format('\n'.join(change_list)))
     with smtplib.SMTP_SSL(host=os.environ.get('SMTP_HOST')) as s:
         s.login(user=os.environ.get('SMTP_USER'), password=os.environ.get('SMTP_PASSWORD'))
         s.send_message(msg)
 
 
 def main():
-    logging.basicConfig(level='DEBUG', stream=sys.stdout, format='%(levelname)s | %(message)s')
+    logging.basicConfig(level=os.environ.get('LOG_LEVEL'), stream=sys.stdout, format='%(levelname)s | %(message)s')
 
     log.info('== Starting up')
     log.info(f"Attempting to read data from {os.environ.get('STOCK_JSON')}")
@@ -70,6 +70,9 @@ def main():
         if not comments:
             continue
         comments_text = comments[0].text
+        if comments_text is None:
+            comments_text = ''
+        comments_text = comments_text.strip()
         other_comments_text = comments[1].text
         if other_comments_text is None:
             other_comments_text = ''
@@ -89,9 +92,9 @@ def main():
             if existing[field] == new[field]:
                 continue
             changed_fields.append(field)
-        change_msg = '; '.join([f'{f} changed from {existing[f]} to {new[f]}' for f in changed_fields])
+        change_msg = '; '.join([f'{f} changed from {existing[f]!r} to {new[f]!r}' for f in changed_fields])
         log.info(f'{item_num_text}: {change_msg}')
-        change_list.append(f"{existing['description']}: {change_msg}")
+        change_list.append(f"* {existing['description']}: {change_msg}")
         stock_current[item_num_text] = new
 
     with open(os.environ.get('STOCK_JSON'), 'w') as f:
