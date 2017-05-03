@@ -15,7 +15,7 @@ def notify(change_list):
     msg = email.message.EmailMessage()
     msg['Subject'] = 'Stock alert'
     msg['From'] = os.environ.get('SMTP_USER')
-    msg['To'] = os.environ.get('NOTIFICATION_TO')
+    msg['Bcc'] = os.environ.get('NOTIFICATION_TO')
     msg.set_content('''Hello,
 
 The following items recently changed status:
@@ -23,7 +23,7 @@ The following items recently changed status:
 {}
 
 (This is an automated message.)
-'''.format('\n'.join(change_list)))
+'''.format('\n\n'.join(change_list)))
     with smtplib.SMTP_SSL(host=os.environ.get('SMTP_HOST')) as s:
         s.login(user=os.environ.get('SMTP_USER'), password=os.environ.get('SMTP_PASSWORD'))
         s.send_message(msg)
@@ -32,6 +32,7 @@ The following items recently changed status:
 def main():
     logging.basicConfig(level='DEBUG', stream=sys.stdout, format='%(levelname)s | %(message)s')
 
+    log.info('== Starting up')
     log.info(f"Attempting to read data from {os.environ.get('STOCK_JSON')}")
     change_list = []
 
@@ -81,7 +82,7 @@ def main():
             stock_current[item_num_text] = new
             continue
         if existing == new:
-            log.info(f'{item_num_text}: no change')
+            log.debug(f'{item_num_text}: no change')
             continue
         changed_fields = []
         for field in new:
@@ -98,6 +99,7 @@ def main():
 
     if change_list:
         notify(change_list)
+    log.info('== End of line')
 
 if __name__ == '__main__':
     main()
