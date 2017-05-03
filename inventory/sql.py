@@ -109,9 +109,14 @@ class InventoryDatabase:
         return params.get('order_id')
 
     def add_sale(self, params):
+        # params = {'user_email': 'user@example.com', 'sale_created_at': <date>, 'sale_customer': 'text'}
         params['sale_id'] = uuid.uuid4()
         params.update(self.get_or_add_user(params))
-        self._u('INSERT INTO sales (sale_id, user_id) VALUES (%(sale_id)s, %(user_id)s)', params)
+        sql = '''
+            INSERT INTO sales (sale_id, user_id, sale_created_at, sale_customer)
+            VALUES (%(sale_id)s, %(user_id)s, %(sale_created_at)s, %(sale_customer)s)
+        '''
+        self._u(sql, params)
         return params.get('sale_id')
 
     def add_sample(self, params):

@@ -2,6 +2,10 @@
 
 {% block title %}Inventory / Sales{% endblock %}
 
+{% block end_of_head %}
+    <meta id="customers_json_url" href="{{ url_for('customers_json') }}">
+{% endblock %}
+
 {% block breadcrumb %}
     <li><a href="{{ url_for('index') }}">Inventory</a></li>
     <li class="active">Sales</li>
@@ -17,9 +21,9 @@
 
     <div class="row bump-top-padding">
         <div class="col-md-12">
-            <form action="{{ url_for('sales_new') }}" method="post">
-                <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> New sale</button>
-            </form>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-new-sale">
+                <span class="glyphicon glyphicon-plus"></span> New sale
+            </button>
         </div>
     </div>
 
@@ -70,4 +74,35 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" tabindex="-1" id="modal-new-sale">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>New sale</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="form-new-sale" action="{{ url_for('sales_new') }}" method="post">
+                        <div class="form-group">
+                            <label for="sale_created_at">Sale date</label>
+                            <input type="date" class="form-control" id="sale_created_at" name="sale_created_at" value="{{ c.today }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sale_customer">Customer</label>
+                            <input type="text" class="form-control" id="sale_customer" name="sale_customer">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" form="form-new-sale">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block end_of_body %}
+    <script src="{{ url_for('static', filename='js/typeahead.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/customer_typeahead.js') }}"></script>
 {% endblock %}

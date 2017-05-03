@@ -216,7 +216,7 @@ def order_detail(order_id):
 @login_required
 def sales():
     profile = flask.session.get('profile')
-    c = {'sales': _get_db().get_sales({'user_email': profile.get('email')})}
+    c = {'sales': _get_db().get_sales({'user_email': profile.get('email')}), 'today': datetime.date.today()}
     return flask.render_template('sales.html', c=c)
 
 
@@ -251,7 +251,12 @@ def sales_delete():
 @login_required
 def sales_new():
     profile = flask.session.get('profile')
-    sale_id = _get_db().add_sale({'user_email': profile.get('email')})
+    params = {
+        'user_email': profile.get('email'),
+        'sale_created_at': flask.request.form.get('sale_created_at'),
+        'sale_customer': flask.request.form.get('sale_customer')
+    }
+    sale_id = _get_db().add_sale(params)
     return flask.redirect(flask.url_for('sale_detail', sale_id=sale_id))
 
 
