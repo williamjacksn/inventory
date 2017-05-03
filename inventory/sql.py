@@ -98,10 +98,14 @@ class InventoryDatabase:
         self._u(sql, params)
 
     def add_order(self, params):
-        # params = {'user_email': 'user@example.com'}
+        # params = {'user_email': 'user@example.com', 'order_created_at': <date>, 'order_note': 'text'}
         params['order_id'] = uuid.uuid4()
         params.update(self.get_or_add_user(params))
-        self._u('INSERT INTO orders (order_id, user_id) VALUES (%(order_id)s, %(user_id)s)', params)
+        sql = '''
+            INSERT INTO orders (order_id, user_id, order_created_at, order_note)
+            VALUES (%(order_id)s, %(user_id)s, %(order_created_at)s, %(order_note)s)
+        '''
+        self._u(sql, params)
         return params.get('order_id')
 
     def add_sale(self, params):

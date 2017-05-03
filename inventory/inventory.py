@@ -1,3 +1,4 @@
+import datetime
 import flask
 import flask_oauth2_login
 import flask_sslify
@@ -103,7 +104,7 @@ def items_delete():
 @login_required
 def orders():
     profile = flask.session.get('profile')
-    c = {'orders': _get_db().get_orders({'user_email': profile.get('email')})}
+    c = {'orders': _get_db().get_orders({'user_email': profile.get('email')}), 'today': datetime.date.today()}
     return flask.render_template('orders.html', c=c)
 
 
@@ -151,7 +152,12 @@ def orders_delete_item():
 @login_required
 def orders_new():
     profile = flask.session.get('profile')
-    order_id = _get_db().add_order({'user_email': profile.get('email')})
+    params = {
+        'user_email': profile.get('email'),
+        'order_created_at': flask.request.form.get('order_created_at'),
+        'order_note': flask.request.form.get('order_note')
+    }
+    order_id = _get_db().add_order(params)
     return flask.redirect(flask.url_for('order_detail', order_id=order_id))
 
 
