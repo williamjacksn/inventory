@@ -46,7 +46,11 @@
                         <td><a href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">{{ sale.sale_created_at.date() }}</a></td>
                         <td>{{ sale.sale_customer }}</td>
                         <td>{{ sale.num_items }}</td>
-                        <td>{{ sale.item_names }}</td>
+                        <td>
+                        {% for item in sale.sale_items if item.name %}
+                            <span class="label label-default">{{ item.name }} ({{ item.quantity }})</span>
+                        {% endfor %}
+                        </td>
                         <td>{{ '✔' if sale.sale_paid }}</td>
                         <td>{{ '✔' if sale.sale_delivered }}</td>
                     </tr>
@@ -62,7 +66,12 @@
             {% for sale in c.sales %}
                 <a class="list-group-item" href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">
                     <h4 class="list-group-item-heading">{{ sale.sale_created_at.date() }} <small>for {{ sale.sale_customer }}</small></h4>
-                    <p><strong>{{ sale.num_items }} item{{ 's' if sale.num_items != 1 }}{{ ':' if sale.num_items > 0 }}</strong> {{ sale.item_names }}</p>
+                    <p>
+                        <strong>{{ sale.num_items }} item{{ 's' if sale.num_items != 1 }}{{ ':' if sale.num_items > 0 }}</strong>
+                        {% for item in sale.sale_items if item.name %}
+                            <span class="label label-default">{{ item.name }} ({{ item.quantity }})</span>
+                        {% endfor %}
+                    </p>
                     <p class="list-group-item-text">
                     {% if sale.sale_paid %}<span class="label label-success">✔ paid</span>{% else %}<span class="label label-danger">✘ not paid</span>{% endif %}
                     {% if sale.sale_delivered %}<span class="label label-success">✔ delivered</span>{% else %}<span class="label label-danger">✘ not delivered</span>{% endif %}

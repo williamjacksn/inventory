@@ -335,7 +335,7 @@ class InventoryDatabase:
         sql = '''
             SELECT sale_id, sale_created_at, sale_customer, sale_paid, sale_delivered,
                 coalesce(sum(quantity), 0) num_items,
-                coalesce(string_agg(item_name || ' (' || quantity || ')', ', ' ORDER BY item_name), '') item_names
+                json_agg(json_build_object('name', item_name, 'quantity', quantity) ORDER BY item_name) sale_items
             FROM sales
             JOIN users USING (user_id)
             LEFT JOIN sale_items USING (sale_id)

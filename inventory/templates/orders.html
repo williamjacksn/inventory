@@ -64,7 +64,8 @@
             {% for order in c.orders %}
                 <a class="list-group-item {% if order.waiting_to_receive %}list-group-item-danger{% endif %}" href="{{ url_for('order_detail', order_id=order.order_id) }}">
                     <h4 class="list-group-item-heading">{{ order.order_created_at.date() }} <small>{{ order.order_note }}</small></h4>
-                    <p class="list-group-item-text"><strong>{{ order.num_items }} item{{ 's' if order.num_items != 1 }}{{ ':' if order.num_items > 0 }}</strong>
+                    <p class="list-group-item-text">
+                        <strong>{{ order.num_items }} item{{ 's' if order.num_items != 1 }}{{ ':' if order.num_items > 0 }}</strong>
                         {% for item in order.order_items if item.name %}
                             {% if item.status == 'ordered' %}<span class="label label-danger">
                             {% elif item.status == 'received' %}<span class="label label-success">
