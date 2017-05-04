@@ -40,7 +40,7 @@
                 <th>Date</th>
                 <th>Note</th>
                 <th>Quantity</th>
-                <th>Received</th>
+                <th>Status</th>
             </tr>
             </thead>
             <tbody>
@@ -49,7 +49,15 @@
                     <td><a href="{{ url_for('order_detail', order_id=order.order_id) }}">{{ order.order_created_at.date() }}</a></td>
                     <td>{{ order.order_note }}</td>
                     <td>{{ order.quantity }}</td>
-                    <td>{{ '✔' if order.status != 'ordered' }}</td>
+                    <td>
+                    {% if order.status == 'ordered' %}
+                        <span class="label label-danger">ordered</span>
+                    {% elif order.status == 'received' %}
+                        <span class="label label-success">✔ received</span>
+                    {% else %}
+                        <span class="label label-default">✘ cancelled</span>
+                    {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
