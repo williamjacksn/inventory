@@ -247,6 +247,19 @@ def sales_delete():
     return flask.redirect(flask.url_for('sales'))
 
 
+@app.route('/sales/delete_item', methods=['POST'])
+@login_required
+def sales_delete_item():
+    profile = flask.session.get('profile')
+    params = {
+        'user_email': profile.get('email'),
+        'sale_id': flask.request.form.get('sale_id'),
+        'item_id': flask.request.form.get('item_id')
+    }
+    _get_db().delete_item_from_sale(params)
+    return flask.redirect(flask.url_for('sale_detail', sale_id=params.get('sale_id')))
+
+
 @app.route('/sales/new', methods=['POST'])
 @login_required
 def sales_new():

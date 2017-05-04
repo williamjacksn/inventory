@@ -45,7 +45,7 @@
                     <th>Item</th>
                     <th>Category</th>
                     <th>Quantity</th>
-                    <th></th>
+                    {% if not c.sale.sale_paid %}<th></th>{% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -54,7 +54,15 @@
                         <td>{{ i.item_name }}</td>
                         <td>{{ i.item_category }}</td>
                         <td>{{ i.quantity }}</td>
-                        <td></td>
+                        {% if not c.sale.sale_paid %}
+                            <td>
+                                <form action="{{ url_for('sales_delete_item') }}" method="post">
+                                    <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                                    <input type="hidden" name="item_id" value="{{ i.item_id }}">
+                                    <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+                                </form>
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -88,6 +96,13 @@
             <ul class="list-group">
             {% for i in c.sale.sale_items %}
                 <li class="list-group-item">
+                    {% if not c.sale.sale_paid %}
+                        <form action="{{ url_for('sales_delete_item') }}" method="post">
+                            <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                            <input type="hidden" name="item_id" value="{{ i.item_id }}">
+                            <button type="submit" class="close">&times;</button>
+                        </form>
+                    {% endif %}
                     <h4 class="list-group-item-heading"><span class="text-muted">{{ i.quantity }}</span> {{ i.item_name }} <small>{{ i.item_category }}</small></h4>
                 </li>
             {% endfor %}

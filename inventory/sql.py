@@ -41,6 +41,16 @@ class InventoryDatabase:
         order = self._q_one(sql, params)
         return order is not None
 
+    def _valid_sale(self, params):
+        # params = {'sale_id': <uuid>, 'user_email': 'user@example.com'}
+        sql = '''
+            SELECT sale_id
+            FROM sales JOIN users USING (user_id)
+            WHERE sale_id = %(sale_id)s AND user_email = %(user_email)s
+        '''
+        sale = self._q_one(sql, params)
+        return sale is not None
+
     def _valid_sample(self, params):
         # params = {'sample_id': <uuid>, 'user_email': 'user@example.com'}
         sql = '''
@@ -149,6 +159,13 @@ class InventoryDatabase:
             return
 
         self._u('DELETE FROM order_items WHERE order_id = %(order_id)s AND item_id = %(item_id)s', params)
+
+    def delete_item_from_sale(self, params):
+        # params = {'sale_id': <uuid>, 'user_email': 'user@example.com', 'item_id': <uuid>}
+        if not self._valid_sale(params):
+            return
+
+        self._u('DELETE FROM sale_items WHERE sale_id = %(sale_id)s AND item_id = %(item_id)s', params)
 
     def delete_order(self, params):
         # params = {'order_id': <uuid>, 'user_email': 'user@example.com'}
