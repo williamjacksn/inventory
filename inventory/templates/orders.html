@@ -96,7 +96,7 @@
                         </div>
                         <div class="form-group">
                             <label for="order_note">Note</label>
-                            <input type="text" class="form-control" id="order_note" name="order_note">
+                            <input type="text" class="form-control" id="order_note" name="order_note" autofocus>
                         </div>
                     </form>
                 </div>
@@ -107,4 +107,8 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block end_of_body %}
+    <script src="{{ url_for('static', filename='js/modal_autofocus.js') }}"></script>
 {% endblock %}

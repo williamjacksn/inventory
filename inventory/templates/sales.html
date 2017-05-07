@@ -98,7 +98,7 @@
                         </div>
                         <div class="form-group">
                             <label for="sale_customer">Customer</label>
-                            <input type="text" class="form-control" id="sale_customer" name="sale_customer">
+                            <input type="text" class="form-control" id="sale_customer" name="sale_customer" autofocus>
                         </div>
                     </form>
                 </div>
@@ -114,4 +114,5 @@
 {% block end_of_body %}
     <script src="{{ url_for('static', filename='js/typeahead.bundle.js') }}"></script>
     <script src="{{ url_for('static', filename='js/customer_typeahead.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal_autofocus.js') }}"></script>
 {% endblock %}
