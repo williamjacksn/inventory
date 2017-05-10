@@ -1,0 +1,1 @@
+$('table.fixed-header').floatThead();

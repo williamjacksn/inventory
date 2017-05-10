@@ -34,7 +34,7 @@
 
     <div class="row bump-top-padding hidden-xs">
         <div class="col-md-12">
-            <table class="table" data-sortable>
+            <table class="table fixed-header">
                 <thead>
                 <tr>
                     <th>Item</th>
@@ -61,18 +61,6 @@
                         <td>{{ item.qty_sold }}</td>
                         <td>{{ item.qty_sample_active }}</td>
                     </tr>
-                    {% if loop.index % 10 == 0 %}
-                        <tr>
-                            <th>Item</th>
-                            <th>Category</th>
-                            <th>On order</th>
-                            <th>In stock</th>
-                            <th>Committed</th>
-                            <th>Available to sell</th>
-                            <th>Sold to date</th>
-                            <th>Samples</th>
-                        </tr>
-                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>
