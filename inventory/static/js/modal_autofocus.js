@@ -1,3 +1,3 @@
 $('.modal').on('shown.bs.modal', function() {
-  $(this).find('[autofocus]').focus();
+  $(this).find('.modal-autofocus').focus();
 });

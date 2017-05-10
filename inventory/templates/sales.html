@@ -65,16 +65,19 @@
             <div class="list-group">
             {% for sale in c.sales %}
                 <a class="list-group-item" href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">
-                    <h4 class="list-group-item-heading">{{ sale.sale_created_at.date() }} <small>for {{ sale.sale_customer }}</small></h4>
+                    <h4 class="list-group-item-heading">
+                        {{ sale.sale_created_at.date() }}
+                        {% if sale.sale_customer %}<small>for {{ sale.sale_customer }}</small>{% endif %}
+                    </h4>
                     <p>
-                        <strong>{{ sale.num_items }} item{{ 's' if sale.num_items != 1 }}{{ ':' if sale.num_items > 0 }}</strong>
-                        {% for item in sale.sale_items if item.name %}
-                            <span class="label label-default">{{ item.name }} ({{ item.quantity }})</span>
-                        {% endfor %}
-                    </p>
-                    <p class="list-group-item-text">
                     {% if sale.sale_paid %}<span class="label label-success">✔ paid</span>{% else %}<span class="label label-danger">✘ not paid</span>{% endif %}
                     {% if sale.sale_delivered %}<span class="label label-success">✔ delivered</span>{% else %}<span class="label label-danger">✘ not delivered</span>{% endif %}
+                    </p>
+                    <p class="list-group-item-text">
+                        <strong>{{ sale.num_items }} item{{ 's' if sale.num_items != 1 }}{{ ':' if sale.num_items > 0 }}</strong>
+                        {% for item in sale.sale_items if item.name %}
+                            <span class="label label-default label-in-list">{{ item.name }} ({{ item.quantity }})</span>
+                        {% endfor %}
                     </p>
                 </a>
             {% else %}
@@ -98,7 +101,7 @@
                         </div>
                         <div class="form-group">
                             <label for="sale_customer">Customer</label>
-                            <input type="text" class="form-control" id="sale_customer" name="sale_customer" autofocus>
+                            <input type="text" class="form-control modal-autofocus" id="sale_customer" name="sale_customer">
                         </div>
                     </form>
                 </div>

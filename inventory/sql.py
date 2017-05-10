@@ -299,7 +299,11 @@ class InventoryDatabase:
         if order is None:
             return
         sql = '''
-            SELECT item_id, item_name, item_category, quantity, status
+            SELECT
+                item_id, item_name, item_category, quantity, status,
+                CASE status
+                    WHEN 'ordered' THEN 'label-danger' WHEN 'received' THEN 'label-success' ELSE 'label-default'
+                END label_class
             FROM order_items LEFT JOIN items USING (item_id)
             WHERE order_id = %(order_id)s
             ORDER BY item_name
@@ -314,8 +318,12 @@ class InventoryDatabase:
             SELECT order_id, order_created_at, coalesce(order_note, '') order_note,
                 coalesce(sum(quantity), 0) num_items,
                 bool_or(status = 'ordered') waiting_to_receive,
-                json_agg(json_build_object('name', item_name, 'quantity', quantity, 'status', status)
-                         ORDER BY item_name) order_items
+                json_agg(json_build_object(
+                    'name', item_name, 'quantity', quantity, 'status', status, 'label_class',
+                    CASE status
+                        WHEN 'ordered' THEN 'label-danger' WHEN 'received' THEN 'label-success' ELSE 'label-default'
+                    END
+                ) ORDER BY item_name) order_items
             FROM orders
             JOIN users USING (user_id)
             LEFT JOIN order_items USING (order_id)

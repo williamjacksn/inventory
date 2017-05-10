@@ -43,11 +43,7 @@
                         <td>{{ order.num_items }}</td>
                         <td>
                         {% for item in order.order_items if item.name %}
-                            {% if item.status == 'ordered' %}<span class="label label-danger">
-                            {% elif item.status == 'received' %}<span class="label label-success">
-                            {% else %}<span class="label label-default">
-                            {% endif %}
-                            {{ item.name }} ({{ item.quantity }})</span>
+                            <span class="label label-in-list {{ item.label_class }}">{{ item.name }} ({{ item.quantity }})</span>
                         {% endfor %}
                         </td>
                         <td>{{ '' if order.waiting_to_receive else '✔' }}</td>
@@ -67,11 +63,7 @@
                     <p class="list-group-item-text">
                         <strong>{{ order.num_items }} item{{ 's' if order.num_items != 1 }}{{ ':' if order.num_items > 0 }}</strong>
                         {% for item in order.order_items if item.name %}
-                            {% if item.status == 'ordered' %}<span class="label label-danger">
-                            {% elif item.status == 'received' %}<span class="label label-success">
-                            {% else %}<span class="label label-default">
-                            {% endif %}
-                            {{ item.name }} ({{ item.quantity }})</span>
+                            <span class="label label-in-list {{ item.label_class }}">{{ item.name }} ({{ item.quantity }})</span>
                         {% endfor %}
                     </p>
                 </a>
@@ -96,7 +88,7 @@
                         </div>
                         <div class="form-group">
                             <label for="order_note">Note</label>
-                            <input type="text" class="form-control" id="order_note" name="order_note" autofocus>
+                            <input type="text" class="form-control modal-autofocus" id="order_note" name="order_note">
                         </div>
                     </form>
                 </div>

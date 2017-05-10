@@ -100,7 +100,7 @@
                     <form id="form-add-sample" action="{{ url_for('samples_new') }}" method="post">
                         <div class="form-group">
                             <label for="item_name">Item</label>
-                            <input type="text" class="form-control item-name-typeahead" id="item_name" name="item_name" required>
+                            <input type="text" class="form-control item-name-typeahead modal-autofocus" id="item_name" name="item_name" required>
                         </div>
                         <div class="form-group">
                             <label for="item_category">Category</label>
@@ -124,4 +124,5 @@
 {% block end_of_body %}
     <script src="{{ url_for('static', filename='js/typeahead.bundle.js') }}"></script>
     <script src="{{ url_for('static', filename='js/item_typeahead.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal_autofocus.js') }}"></script>
 {% endblock %}
