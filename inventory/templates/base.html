@@ -7,7 +7,8 @@
     <title>{% block title %}Inventory{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sortable-theme-minimal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fixedHeader.bootstrap.min.css') }}">
     {% block end_of_head %}{% endblock %}
 </head>
 <body>
@@ -29,8 +30,9 @@
 </div>
 <script src="{{ url_for('static', filename='js/jquery-3.2.0.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/jquery.floatThead.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/fixed_header_table.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dataTables.fixedHeader.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/inventory_datatables.js') }}"></script>
 {% block end_of_body %}{% endblock %}
 </body>
 </html>
