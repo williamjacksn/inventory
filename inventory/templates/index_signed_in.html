@@ -1,9 +1,15 @@
 {% extends 'index.html' %}
 
 {% block sign_in %}
-    <a class="btn btn-danger btn-block" href="{{ url_for('sign_out') }}" title="{{ session.profile.email }}">
-        <span class="glyphicon glyphicon-log-out"></span> Sign out ({{ session.profile.name }})
-    </a>
+    <div class="btn-group btn-block">
+        <button type="button" class="btn btn-primary btn-block dropdown-toggle" data-toggle="dropdown">
+            <span class="glyphicon glyphicon-user"></span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li class="dropdown-header">{{ session.profile.email }}</li>
+            <li><a href="{{ url_for('sign_out') }}">Sign out</a></li>
+        </ul>
+    </div>
 {% endblock %}
 
 {% block content %}
