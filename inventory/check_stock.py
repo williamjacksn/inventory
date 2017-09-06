@@ -82,6 +82,7 @@ def main():
         existing = stock_current.get(item_num_text)
         if existing is None:
             log.info(f'{item_num_text}: adding a new item')
+            change_list.append('* New item: {description}'.format(**new))
             stock_current[item_num_text] = new
             continue
         if existing == new:
