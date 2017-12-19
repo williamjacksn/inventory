@@ -1,0 +1,3 @@
+TODO: typeahead suggestions before typing
+TODO: stock totals per category
+TODO: export csv with inventory numbers for import to Square -- or use Square API to sync

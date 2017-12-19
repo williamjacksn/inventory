@@ -7,7 +7,7 @@ setup(
     url='https://github.com/williamjacksn/inventory',
     author='William Jackson',
     author_email='william@subtlecoolness.com',
-    install_requires=['Flask', 'Flask-OAuth2-Login', 'Flask-SSLify', 'lxml', 'psycopg2', 'waitress'],
+    install_requires=['Flask', 'Flask-OAuth2-Login', 'Flask-SSLify', 'lxml', 'psycopg2', 'requests', 'waitress'],
     packages=['inventory'],
     include_package_data=True,
     entry_points={
