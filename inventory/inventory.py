@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 app = flask.Flask(__name__)
 
 for key in ['ADMIN_EMAIL', 'DSN', 'GOOGLE_LOGIN_CLIENT_ID', 'GOOGLE_LOGIN_CLIENT_SECRET',
-            'GOOGLE_LOGIN_REDIRECT_SCHEME', 'SECRET_KEY']:
+            'GOOGLE_LOGIN_REDIRECT_SCHEME', 'SECRET_KEY', 'UNIX_SOCKET']:
     app.config[key] = os.environ.get(key)
 
 if app.config.get('GOOGLE_LOGIN_REDIRECT_SCHEME').lower() == 'https':
@@ -351,4 +351,4 @@ def sign_out():
 def main():
     with app.app_context():
         _get_db().migrate()
-    waitress.serve(app)
+    waitress.serve(app, unix_socket=app.config['UNIX_SOCKET'], unix_socket_perms='666')

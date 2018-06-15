@@ -105,5 +105,6 @@ def main():
         notify(change_list)
     log.info('== End of line')
 
+
 if __name__ == '__main__':
     main()
