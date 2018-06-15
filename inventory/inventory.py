@@ -351,4 +351,7 @@ def sign_out():
 def main():
     with app.app_context():
         _get_db().migrate()
-    waitress.serve(app, unix_socket=app.config['UNIX_SOCKET'], unix_socket_perms='666')
+    if app.config['UNIX_SOCKET']:
+        waitress.serve(app, unix_socket=app.config['UNIX_SOCKET'], unix_socket_perms='666')
+    else:
+        waitress.serve(app)
