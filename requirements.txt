@@ -1,0 +1,5 @@
+Flask==1.0.2
+Flask-OAuth2-Login==0.0.9
+Flask-SSLify==0.1.5
+psycopg2==2.7.5
+waitress==1.1.0
