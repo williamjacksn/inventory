@@ -6,15 +6,22 @@ import functools
 import inventory.sql
 import logging
 import os
+import sys
 import waitress
 
 log = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
 
+DEFAULTS = {
+    'LOG_FORMAT': '%(levelname)s [%(name)s] %(message)s',
+    'LOG_LEVEL': 'DEBUG',
+    'PORT': 8080
+}
+
 for key in ['ADMIN_EMAIL', 'DSN', 'GOOGLE_LOGIN_CLIENT_ID', 'GOOGLE_LOGIN_CLIENT_SECRET',
-            'GOOGLE_LOGIN_REDIRECT_SCHEME', 'SECRET_KEY', 'UNIX_SOCKET']:
-    app.config[key] = os.environ.get(key)
+            'GOOGLE_LOGIN_REDIRECT_SCHEME', 'LOG_FORMAT', 'LOG_LEVEL', 'PORT', 'SECRET_KEY', 'UNIX_SOCKET']:
+    app.config[key] = os.environ.get(key, DEFAULTS.get(key))
 
 if app.config.get('GOOGLE_LOGIN_REDIRECT_SCHEME').lower() == 'https':
     sslify = flask_sslify.SSLify(app)
@@ -349,9 +356,10 @@ def sign_out():
 
 
 def main():
+    logging.basicConfig(format=app.config['LOG_FORMAT'], level=app.config['LOG_LEVEL'], stream=sys.stdout)
     with app.app_context():
         _get_db().migrate()
     if app.config['UNIX_SOCKET']:
         waitress.serve(app, unix_socket=app.config['UNIX_SOCKET'], unix_socket_perms='666')
     else:
-        waitress.serve(app)
+        waitress.serve(app, port=app.config['PORT'])

@@ -28,7 +28,7 @@ the connection string for the database, for example: `postgresql://username:pass
 
 **Inventory** requires at least Python 3.6. You can install from PyPI:
 
-    pip install inventory==1.1.8
+    pip install inventory==2.0.0
 
 Installation will add the `inventory` command to your path.
 
@@ -42,8 +42,23 @@ Here are all the environment variables **Inventory** needs to run, including tho
 *   `GOOGLE_LOGIN_REDIRECT_SCHEME` (either `http` or `https`)
 *   `SECRET_KEY` (a random string used for secure cookies)
 
-By default, **Inventory** will listen on port 8080. If you want to listen on a Unix socket instead of a TCP port, set
-the environment variable `UNIX_SOCKET` to the path of the socket, for example: `/var/run/inventory.socket`.
+By default, **Inventory** will listen on port 8080. Listen on a different port by setting the `PORT` environment
+variable to the port number you want to listen on, for example:
+
+*   `PORT=8088`
+
+If you want to listen on a Unix socket instead of a TCP port, set the environment variable `UNIX_SOCKET` to
+the path of the socket, for example:
+
+*   `UNIX_SOCKET=/var/run/inventory.socket`
+
+If `UNIX_SOCKET` and `PORT` are both set, `UNIX_SOCKET` will take priority.
+
+**Inventory** uses Python's logging module to send logs to `stdout`. You can customize the log format and level with the
+`LOG_FORMAT` and `LOG_LEVEL` environment variables. Defaults are:
+
+*   `LOG_FORMAT="%(levelname)s [%(name)s] %(message)s"`
+*   `LOG_LEVEL=DEBUG`
 
 ### 5. Launch
 
