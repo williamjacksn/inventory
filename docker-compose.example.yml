@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  inventory:
+    image: williamjackson/inventory:2.0.0
+    environment:
+      DSN: postgresql://username:password@hostname:port/databasename
+      GOOGLE_LOGIN_CLIENT_ID: random-string.apps.googleusercontent.com
+      GOOGLE_LOGIN_CLIENT_SECRET: random-string
+      GOOGLE_LOGIN_REDIRECT_SCHEME: http
+      LOG_FORMAT: "%(levelname)s [%(name)s] %(message)s"
+      LOG_LEVEL: DEBUG
+      PORT: 8080
+      PYTHONUNBUFFERED: 1
+      SECRET_KEY: random-string
+    ports:
+      - 8080:8080
