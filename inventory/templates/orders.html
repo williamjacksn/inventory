@@ -36,7 +36,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for order in c.orders %}
+                {% for order in g.orders %}
                     <tr{% if order.waiting_to_receive %} class="bg-danger"{% endif %}>
                         <td><a href="{{ url_for('order_detail', order_id=order.order_id) }}">{{ order.order_created_at.date() }}</a></td>
                         <td>{{ order.order_note }}</td>
@@ -57,7 +57,7 @@
     <div class="row bump-top-padding visible-xs-block">
         <div class="col-xs-12">
             <div class="list-group">
-            {% for order in c.orders %}
+            {% for order in g.orders %}
                 <a class="list-group-item {% if order.waiting_to_receive %}list-group-item-danger{% endif %}" href="{{ url_for('order_detail', order_id=order.order_id) }}">
                     <h4 class="list-group-item-heading">{{ order.order_created_at.date() }} <small>{{ order.order_note }}</small></h4>
                     <p class="list-group-item-text">
@@ -84,7 +84,7 @@
                     <form id="form-new-order" action="{{ url_for('orders_new') }}" method="post">
                         <div class="form-group">
                             <label for="order_created_at">Date</label>
-                            <input type="date" class="form-control" id="order_created_at" name="order_created_at" value="{{ c.today }}" required>
+                            <input type="date" class="form-control" id="order_created_at" name="order_created_at" value="{{ g.today }}" required>
                         </div>
                         <div class="form-group">
                             <label for="order_note">Note</label>

@@ -54,7 +54,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for item in c.inventory %}
+                {% for item in g.inventory %}
                     {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_active %}
                     {% set qty_available = qty_in_stock - item.qty_committed %}
                     <tr class="filter-candidate" data-filter-value="{{ item.filter_value }}">
@@ -76,7 +76,7 @@
     <div class="row bump-top-padding visible-xs-block">
         <div class="col-xs-12">
             <div class="list-group">
-            {% for item in c.inventory %}
+            {% for item in g.inventory %}
                 {% set qty_in_stock = item.qty_received - item.qty_sold - item.qty_sample_used - item.qty_sample_active %}
                 {% set qty_available = qty_in_stock - item.qty_committed %}
                 <a class="list-group-item filter-candidate" href="{{ url_for('item_detail', item_id=item.item_id) }}" data-filter-value="{{ item.filter_value }}">

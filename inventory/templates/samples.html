@@ -40,7 +40,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for sample in c.samples %}
+                {% for sample in g.samples %}
                     <tr{% if sample.sample_used %} class="text-muted"{% endif %}>
                         <td>{{ sample.item_name }}</td>
                         <td>{{ sample.item_category }}</td>
@@ -65,7 +65,7 @@
     <div class="row bump-top-padding visible-xs-block">
         <div class="col-xs-12">
             <ul class="list-group">
-            {% for sample in c.samples %}
+            {% for sample in g.samples %}
                 <li class="list-group-item">
                     <h4 class="list-group-item-heading">{{ sample.quantity }} {{ sample.item_name }} <small>{{ sample.item_category }}</small></h4>
                     <p>

@@ -64,9 +64,10 @@ def _get_db():
 def index():
     profile = flask.session.get('profile')
     if profile is None:
-        return flask.render_template('index.html', c={'sign_in_url': google_login.authorization_url()})
-    c = {'inventory': _get_db().get_inventory({'user_email': profile.get('email')})}
-    return flask.render_template('index_signed_in.html', c=c)
+        flask.g.sign_in_url = google_login.authorization_url()
+        return flask.render_template('index.html')
+    flask.g.inventory = _get_db().get_inventory({'user_email': profile.get('email')})
+    return flask.render_template('index_signed_in.html')
 
 
 @app.route('/customers.json')
@@ -91,8 +92,8 @@ def item_detail(item_id):
         'user_email': profile.get('email'),
         'item_id': item_id
     }
-    c = _get_db().get_item_details(params)
-    return flask.render_template('item_detail.html', c=c)
+    flask.g.item = _get_db().get_item_details(params)
+    return flask.render_template('item_detail.html')
 
 
 @app.route('/items/delete', methods=['POST'])
@@ -111,8 +112,9 @@ def items_delete():
 @login_required
 def orders():
     profile = flask.session.get('profile')
-    c = {'orders': _get_db().get_orders({'user_email': profile.get('email')}), 'today': datetime.date.today()}
-    return flask.render_template('orders.html', c=c)
+    flask.g.today = datetime.date.today()
+    flask.g.orders = _get_db().get_orders({'user_email': profile.get('email')})
+    return flask.render_template('orders.html')
 
 
 @app.route('/orders/add_item', methods=['POST'])
@@ -213,18 +215,19 @@ def orders_set_lock():
 @login_required
 def order_detail(order_id):
     profile = flask.session.get('profile')
-    order = _get_db().get_order({'user_email': profile.get('email'), 'order_id': order_id})
-    if order is None:
+    flask.g.order = _get_db().get_order({'user_email': profile.get('email'), 'order_id': order_id})
+    if flask.g.order is None:
         flask.abort(404)
-    return flask.render_template('order_detail.html', c={'order': order})
+    return flask.render_template('order_detail.html')
 
 
 @app.route('/sales')
 @login_required
 def sales():
     profile = flask.session.get('profile')
-    c = {'sales': _get_db().get_sales({'user_email': profile.get('email')}), 'today': datetime.date.today()}
-    return flask.render_template('sales.html', c=c)
+    flask.g.today = datetime.date.today()
+    flask.g.sales = _get_db().get_sales({'user_email': profile.get('email')})
+    return flask.render_template('sales.html')
 
 
 @app.route('/sales/add_item', methods=['POST'])
@@ -300,18 +303,18 @@ def sales_set_details():
 @login_required
 def sale_detail(sale_id):
     profile = flask.session.get('profile')
-    sale = _get_db().get_sale({'user_email': profile.get('email'), 'sale_id': sale_id})
-    if sale is None:
+    flask.g.sale = _get_db().get_sale({'user_email': profile.get('email'), 'sale_id': sale_id})
+    if flask.g.sale is None:
         flask.abort(404)
-    return flask.render_template('sale_detail.html', c={'sale': sale})
+    return flask.render_template('sale_detail.html')
 
 
 @app.route('/samples')
 @login_required
 def samples():
     profile = flask.session.get('profile')
-    c = {'samples': _get_db().get_samples({'user_email': profile.get('email')})}
-    return flask.render_template('samples.html', c=c)
+    flask.g.samples = _get_db().get_samples({'user_email': profile.get('email')})
+    return flask.render_template('samples.html')
 
 
 @app.route('/samples/delete', methods=['POST'])

@@ -10,23 +10,23 @@
 {% block content %}
     <div class="row bump-top-padding">
         <div class="col-md-12">
-            <h1>{{ c.item_name }} <small>{{ c.item_category }}</small></h1>
+            <h1>{{ g.item.item_name }} <small>{{ g.item.item_category }}</small></h1>
             <p><a href="{{ url_for('index') }}">&larr; back to inventory</a></p>
         </div>
     </div>
 
-    {% if c.deletable %}
+    {% if g.item.deletable %}
     <div class="row bump-top-padding">
         <div class="col-md-12">
             <form action="{{ url_for('items_delete') }}" method="post">
-                <input type="hidden" name="item_id" value="{{ c.item_id }}">
+                <input type="hidden" name="item_id" value="{{ g.item.item_id }}">
                 <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Delete item</button>
             </form>
         </div>
     </div>
     {% endif %}
 
-    {% if c.orders %}
+    {% if g.item.orders %}
     <div class="row bump-top-padding">
         <div class="col-md-12">
             <h2>Orders</h2>
@@ -44,7 +44,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for order in c.orders %}
+            {% for order in g.item.orders %}
                 <tr>
                     <td><a href="{{ url_for('order_detail', order_id=order.order_id) }}">{{ order.order_created_at.date() }}</a></td>
                     <td>{{ order.order_note }}</td>
@@ -63,7 +63,7 @@
             </tbody>
         </table>
         <div class="list-group visible-xs-block">
-        {% for order in c.orders %}
+        {% for order in g.item.orders %}
             <a class="list-group-item" href="{{ url_for('order_detail', order_id=order.order_id) }}">
                 <h4 class="list-group-item-heading">{{ order.order_created_at.date() }} <small>{{ order.order_note }}</small></h4>
                 <p>Quantity: {{ order.quantity }}</p>
@@ -82,7 +82,7 @@
     </div>
     {% endif %}
 
-    {% if c.sales %}
+    {% if g.item.sales %}
     <div class="row bump-top-padding">
         <div class="col-md-12">
             <h2>Sales</h2>
@@ -101,7 +101,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for sale in c.sales %}
+            {% for sale in g.item.sales %}
                 <tr>
                     <td><a href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">{{ sale.sale_created_at.date() }}</a></td>
                     <td>{{ sale.sale_customer }}</td>
@@ -113,7 +113,7 @@
             </tbody>
         </table>
         <div class="list-group visible-xs-block">
-        {% for sale in c.sales %}
+        {% for sale in g.item.sales %}
             <a class="list-group-item" href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">
                 <h4 class="list-group-item-heading">{{ sale.sale_created_at.date() }}{% if sale.sale_customer %} <small>for {{ sale.sale_customer }}</small>{% endif %}</h4>
                 <p>Quantity: {{ sale.quantity }}</p>
@@ -127,7 +127,7 @@
     </div>
     {% endif %}
 
-    {% if c.samples %}
+    {% if g.item.samples %}
     <div class="row bump-top-padding"><div class="col-md-12"><h2>Samples</h2></div></div>
 
     <div class="row bump-top-padding">
@@ -139,7 +139,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for sample in c.samples %}
+            {% for sample in g.item.samples %}
                 <tr>
                     <td>{{ sample.quantity }}</td>
                     <td> {{ '✔' if sample.sample_used }}</td>
@@ -148,7 +148,7 @@
             </tbody>
         </table>
         <ul class="list-group visible-xs-block">
-        {% for sample in c.samples %}
+        {% for sample in g.item.samples %}
             <li class="list-group-item">
                 <p>Quantity: {{ sample.quantity }}</p>
                 <p class="list-group-item-text">

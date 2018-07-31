@@ -16,11 +16,11 @@
 {% block content %}
     <div class="row bump-top-padding">
         <div class="col-md-12">
-            <h1>{{ c.sale.sale_created_at.date() }} <small>{{ c.sale.num_items }} item{{ 's' if c.sale.num_items != 1 }}</small></h1>
-            {% if c.sale.sale_customer %}<h4>for {{ c.sale.sale_customer }}</h4>{% endif %}
+            <h1>{{ g.sale.sale_created_at.date() }} <small>{{ g.sale.num_items }} item{{ 's' if g.sale.num_items != 1 }}</small></h1>
+            {% if g.sale.sale_customer %}<h4>for {{ g.sale.sale_customer }}</h4>{% endif %}
             <h4>
-                {% if c.sale.sale_paid %}<span class="label label-success">✔ paid</span>{% else %}<span class="label label-danger">✘ not paid</span>{% endif %}
-                {% if c.sale.sale_delivered %}<span class="label label-success">✔ delivered</span>{% else %}<span class="label label-danger">✘ not delivered</span>{% endif %}
+                {% if g.sale.sale_paid %}<span class="label label-success">✔ paid</span>{% else %}<span class="label label-danger">✘ not paid</span>{% endif %}
+                {% if g.sale.sale_delivered %}<span class="label label-success">✔ delivered</span>{% else %}<span class="label label-danger">✘ not delivered</span>{% endif %}
             </h4>
             <p><a href="{{ url_for('sales') }}">&larr; back to all sales</a></p>
         </div>
@@ -45,19 +45,19 @@
                     <th>Item</th>
                     <th>Category</th>
                     <th>Quantity</th>
-                    {% if not c.sale.sale_paid %}<th></th>{% endif %}
+                    {% if not g.sale.sale_paid %}<th></th>{% endif %}
                 </tr>
                 </thead>
                 <tbody>
-                {% for i in c.sale.sale_items %}
+                {% for i in g.sale.sale_items %}
                     <tr>
                         <td>{{ i.item_name }}</td>
                         <td>{{ i.item_category }}</td>
                         <td>{{ i.quantity }}</td>
-                        {% if not c.sale.sale_paid %}
+                        {% if not g.sale.sale_paid %}
                             <td>
                                 <form action="{{ url_for('sales_delete_item') }}" method="post">
-                                    <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                                    <input type="hidden" name="sale_id" value="{{ g.sale.sale_id }}">
                                     <input type="hidden" name="item_id" value="{{ i.item_id }}">
                                     <button type="submit" class="btn btn-danger btn-xs">Delete</button>
                                 </form>
@@ -66,12 +66,12 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-                {% if not c.sale.sale_paid %}
+                {% if not g.sale.sale_paid %}
                 <tfoot>
                     <tr>
                         <td>
                             <form id="form-add-sale-item" method="post" action="{{ url_for('sales_add_item') }}">
-                                <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                                <input type="hidden" name="sale_id" value="{{ g.sale.sale_id }}">
                                 <input type="text" class="form-control item-name-typeahead" id="item_name" name="item_name" placeholder="Item name" required autofocus>
                             </form>
                         </td>
@@ -94,11 +94,11 @@
     <div class="row bump-top-padding visible-xs-block">
         <div class="col-xs-12">
             <ul class="list-group">
-            {% for i in c.sale.sale_items %}
+            {% for i in g.sale.sale_items %}
                 <li class="list-group-item">
-                    {% if not c.sale.sale_paid %}
+                    {% if not g.sale.sale_paid %}
                         <form action="{{ url_for('sales_delete_item') }}" method="post">
-                            <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                            <input type="hidden" name="sale_id" value="{{ g.sale.sale_id }}">
                             <input type="hidden" name="item_id" value="{{ i.item_id }}">
                             <button type="submit" class="close">&times;</button>
                         </form>
@@ -107,11 +107,11 @@
                 </li>
             {% endfor %}
             </ul>
-            {% if not c.sale.sale_paid %}
+            {% if not g.sale.sale_paid %}
             <ul class="list-group">
                 <li class="list-group-item">
                     <form action="{{ url_for('sales_add_item') }}" method="post">
-                        <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                        <input type="hidden" name="sale_id" value="{{ g.sale.sale_id }}">
                         <div class="form-group">
                             <label for="item_name_xs">Item</label>
                             <input type="text" class="form-control item-name-typeahead" id="item_name_xs" name="item_name" required>
@@ -140,23 +140,23 @@
                 </div>
                 <div class="modal-body">
                     <form id="form-edit-sale" action="{{ url_for('sales_set_details') }}" method="post">
-                        <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                        <input type="hidden" name="sale_id" value="{{ g.sale.sale_id }}">
                         <div class="form-group">
                             <label for="sale_created_at">Sale date</label>
-                            <input type="date" class="form-control" id="sale_created_at" name="sale_created_at" value="{{ c.sale.sale_created_at.date() }}" required>
+                            <input type="date" class="form-control" id="sale_created_at" name="sale_created_at" value="{{ g.sale.sale_created_at.date() }}" required>
                         </div>
                         <div class="form-group">
                             <label for="sale_customer">Customer</label>
-                            <input type="text" class="form-control" id="sale_customer" name="sale_customer" value="{{ c.sale.sale_customer }}">
+                            <input type="text" class="form-control" id="sale_customer" name="sale_customer" value="{{ g.sale.sale_customer }}">
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" name="sale_paid" {% if c.sale.sale_paid %}checked{% endif %}> Customer paid
+                                <input type="checkbox" name="sale_paid" {% if g.sale.sale_paid %}checked{% endif %}> Customer paid
                             </label>
                         </div>
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" name="sale_delivered" {% if c.sale.sale_delivered %}checked{% endif %}> Product delivered
+                                <input type="checkbox" name="sale_delivered" {% if g.sale.sale_delivered %}checked{% endif %}> Product delivered
                             </label>
                         </div>
                     </form>
@@ -177,7 +177,7 @@
                 </div>
                 <div class="modal-footer">
                     <form action="{{ url_for('sales_delete') }}" method="post">
-                        <input type="hidden" name="sale_id" value="{{ c.sale.sale_id }}">
+                        <input type="hidden" name="sale_id" value="{{ g.sale.sale_id }}">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Keep sale</button>
                         <button type="submit" class="btn btn-danger">Delete sale</button>
                     </form>

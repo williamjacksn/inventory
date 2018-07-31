@@ -41,7 +41,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for sale in c.sales %}
+                {% for sale in g.sales %}
                     <tr class="{% if not sale.sale_paid %}bg-danger{% elif not sale.sale_delivered %}bg-warning{% endif %}">
                         <td><a href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">{{ sale.sale_created_at.date() }}</a></td>
                         <td>{{ sale.sale_customer }}</td>
@@ -63,7 +63,7 @@
     <div class="row bump-top-padding visible-xs-block">
         <div class="col-xs-12">
             <div class="list-group">
-            {% for sale in c.sales %}
+            {% for sale in g.sales %}
                 <a class="list-group-item" href="{{ url_for('sale_detail', sale_id=sale.sale_id) }}">
                     <h4 class="list-group-item-heading">
                         {{ sale.sale_created_at.date() }}
@@ -97,7 +97,7 @@
                     <form id="form-new-sale" action="{{ url_for('sales_new') }}" method="post">
                         <div class="form-group">
                             <label for="sale_created_at">Sale date</label>
-                            <input type="date" class="form-control" id="sale_created_at" name="sale_created_at" value="{{ c.today }}" required>
+                            <input type="date" class="form-control" id="sale_created_at" name="sale_created_at" value="{{ g.today }}" required>
                         </div>
                         <div class="form-group">
                             <label for="sale_customer">Customer</label>

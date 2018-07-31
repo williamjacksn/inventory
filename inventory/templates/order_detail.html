@@ -15,8 +15,8 @@
 {% block content %}
     <div class="row bump-top-padding">
         <div class="col-md-12">
-            <h1>{{ c.order.order_created_at.date() }} <small>{{ c.order.num_items }} item{{ 's' if c.order.num_items != 1 }}</small></h1>
-            {% if c.order.order_note %}<h4>{{ c.order.order_note }}</h4>{% endif %}
+            <h1>{{ g.order.order_created_at.date() }} <small>{{ g.order.num_items }} item{{ 's' if g.order.num_items != 1 }}</small></h1>
+            {% if g.order.order_note %}<h4>{{ g.order.order_note }}</h4>{% endif %}
             <p><a href="{{ url_for('orders') }}">&larr; back to all orders</a></p>
         </div>
     </div>
@@ -24,8 +24,8 @@
     <div class="row bump-top-padding">
         <div class="col-md-12">
             <form action="{{ url_for('orders_set_lock') }}" method="post">
-                <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
-                {% if c.order.order_locked %}
+                <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
+                {% if g.order.order_locked %}
                     <input type="hidden" name="lock_status" value="unlocked">
                     <button type="submit" class="btn btn-default">
                         <span class="glyphicon glyphicon-lock"></span> Unlock<span class="hidden-xs"> order</span>
@@ -55,11 +55,11 @@
                     <th>Category</th>
                     <th>Quantity</th>
                     <th></th>
-                    {% if not c.order.order_locked %}<th></th>{% endif %}
+                    {% if not g.order.order_locked %}<th></th>{% endif %}
                 </tr>
                 </thead>
                 <tbody>
-                {% for i in c.order.order_items %}
+                {% for i in g.order.order_items %}
                     <tr>
                         <td>{{ i.item_name }}</td>
                         <td>{{ i.item_category }}</td>
@@ -67,7 +67,7 @@
                         <td>
                             {% if i.status == 'ordered' %}
                                 <form action="{{ url_for('orders_set_item_status') }}" method="post">
-                                    <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                                    <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
                                     <input type="hidden" name="item_id" value="{{ i.item_id }}">
                                     <button class="btn btn-xs btn-success" name="status" value="received">Receive</button>
                                     <button class="btn btn-xs btn-default" name="status" value="cancelled">Cancel</button>
@@ -78,10 +78,10 @@
                                 <span class="label label-default">Cancelled</span>
                             {% endif %}
                         </td>
-                        {% if not c.order.order_locked %}
+                        {% if not g.order.order_locked %}
                             <td>
                                 <form action="{{ url_for('orders_delete_item') }}" method="post">
-                                    <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                                    <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
                                     <input type="hidden" name="item_id" value="{{ i.item_id }}">
                                     <button type="submit" class="btn btn-xs btn-danger">Delete</button>
                                 </form>
@@ -90,12 +90,12 @@
                     </tr>
                 {% endfor %}
                 </tbody>
-                {% if not c.order.order_locked %}
+                {% if not g.order.order_locked %}
                 <tfoot>
                     <tr>
                         <td>
                             <form id="form-add-order-item" method="post" action="{{ url_for('orders_add_item') }}">
-                                <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                                <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
                                 <input type="text" class="form-control item-name-typeahead" id="item_name" name="item_name" placeholder="Item name" required autofocus>
                             </form>
                         </td>
@@ -119,11 +119,11 @@
     <div class="row bump-top-padding visible-xs-block">
         <div class="col-xs-12">
             <ul class="list-group">
-            {% for i in c.order.order_items %}
+            {% for i in g.order.order_items %}
                 <li class="list-group-item">
-                    {% if not c.order.order_locked %}
+                    {% if not g.order.order_locked %}
                         <form action="{{ url_for('orders_delete_item') }}" method="post">
-                            <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                            <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
                             <input type="hidden" name="item_id" value="{{ i.item_id }}">
                             <button type="submit" class="close">&times;</button>
                         </form>
@@ -131,7 +131,7 @@
                     <h4 class="list-group-item-heading"><span class="text-muted">{{ i.quantity }}</span> {{ i.item_name }} <small>{{ i.item_category }}</small></h4>
                     {% if i.status == 'ordered' %}
                         <form action="{{ url_for('orders_set_item_status') }}" method="post">
-                            <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                            <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
                             <input type="hidden" name="item_id" value="{{ i.item_id }}">
                             <button type="submit" class="btn btn-success" name="status" value="received">Receive</button>
                             <button type="submit" class="btn btn-default" name="status" value="cancelled">Cancel</button>
@@ -144,11 +144,11 @@
                 </li>
             {% endfor %}
             </ul>
-            {% if not c.order.order_locked %}
+            {% if not g.order.order_locked %}
             <ul class="list-group">
                 <li class="list-group-item">
                     <form action="{{ url_for('orders_add_item') }}" method="post">
-                        <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                        <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
                         <div class="form-group">
                             <label for="item_name_xs">Item</label>
                             <input type="text" class="form-control item-name-typeahead" id="item_name_xs" name="item_name" required>
@@ -177,14 +177,14 @@
                 </div>
                 <div class="modal-body">
                     <form id="form-edit-order-details" action="{{ url_for('orders_set_details') }}" method="post">
-                        <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                        <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
                         <div class="form-group">
                             <label for="order_created_at">Date</label>
-                            <input type="date" class="form-control" id="order_created_at" name="order_created_at" value="{{ c.order.order_created_at.date() }}" required>
+                            <input type="date" class="form-control" id="order_created_at" name="order_created_at" value="{{ g.order.order_created_at.date() }}" required>
                         </div>
                         <div class="form-group">
                             <label for="order_note">Note</label>
-                            <input type="text" class="form-control" id="order_note" name="order_note" value="{{ c.order.order_note }}">
+                            <input type="text" class="form-control" id="order_note" name="order_note" value="{{ g.order.order_note }}">
                         </div>
                     </form>
                 </div>
@@ -204,7 +204,7 @@
                 </div>
                 <div class="modal-footer">
                     <form action="{{ url_for('orders_delete') }}" method="post">
-                        <input type="hidden" name="order_id" value="{{ c.order.order_id }}">
+                        <input type="hidden" name="order_id" value="{{ g.order.order_id }}">
                         <button class="btn btn-default" data-dismiss="modal">Keep order</button>
                         <button type="submit" class="btn btn-danger">Delete order</button>
                     </form>
