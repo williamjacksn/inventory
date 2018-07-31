@@ -22,7 +22,9 @@ Otherwise, set it to `http`.
 ### 2. Database
 
 **Inventory** needs a PostgreSQL database and permission to create tables. The environment variable `DSN` should contain
-the connection string for the database, for example: `postgresql://username:password@hostname:port/databasename`.
+the connection string for the database, for example:
+
+*   `DSN=postgresql://username:password@hostname:port/databasename`.
 
 ### 3. Install
 
