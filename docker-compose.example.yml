@@ -2,7 +2,7 @@ version: "3"
 
 services:
   inventory:
-    image: williamjackson/inventory:2.0.0
+    image: williamjackson/inventory:2.0.1
     environment:
       DSN: postgresql://username:password@hostname:port/databasename
       GOOGLE_LOGIN_CLIENT_ID: random-string.apps.googleusercontent.com

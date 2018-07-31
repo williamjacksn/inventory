@@ -1,3 +1,6 @@
+build
+dist
 docker-compose.yml
 .idea
+inventory.egg-info
 __pycache__
