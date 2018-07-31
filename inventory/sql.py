@@ -32,7 +32,10 @@ class InventoryDatabase:
             return c.rowcount
 
     def _valid_order(self, params):
-        # params = {'order_id': <uuid>, 'user_email': 'user@example.com'}
+        # params = {
+        #   'order_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             SELECT order_id
             FROM orders JOIN users USING (user_id)
@@ -42,7 +45,10 @@ class InventoryDatabase:
         return order is not None
 
     def _valid_sale(self, params):
-        # params = {'sale_id': <uuid>, 'user_email': 'user@example.com'}
+        # params = {
+        #   'sale_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             SELECT sale_id
             FROM sales JOIN users USING (user_id)
@@ -52,7 +58,10 @@ class InventoryDatabase:
         return sale is not None
 
     def _valid_sample(self, params):
-        # params = {'sample_id': <uuid>, 'user_email': 'user@example.com'}
+        # params = {
+        #   'sample_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             SELECT sample_id
             FROM samples JOIN items USING (item_id) JOIN users USING (user_id)
@@ -62,8 +71,11 @@ class InventoryDatabase:
 
     def add_item_to_order(self, params):
         # params = {
-        #   'order_id': <uuid>, 'user_email': 'user@example.com', 'item_name': 'An item', 'item_category': 'A category',
-        #   'quantity': 1
+        #   'item_category': 'A category',
+        #   'item_name': 'An item',
+        #   'order_id': <uuid>,
+        #   'quantity': 1,
+        #   'user_email': 'user@example.com'
         # }
         if not self._valid_order(params):
             return
@@ -83,7 +95,10 @@ class InventoryDatabase:
         self._u(sql, params)
 
     def add_item_to_sale(self, params):
-        # params = {'sale_id': <uuid>, 'user_email': 'user@example.com'}
+        # params = {
+        #   'sale_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             SELECT sale_id
             FROM sales JOIN users USING (user_id)
@@ -108,7 +123,11 @@ class InventoryDatabase:
         self._u(sql, params)
 
     def add_order(self, params):
-        # params = {'user_email': 'user@example.com', 'order_created_at': <date>, 'order_note': 'text'}
+        # params = {
+        #   'order_created_at': <date>,
+        #   'order_note': 'text',
+        #   'user_email': 'user@example.com'
+        # }
         params['order_id'] = uuid.uuid4()
         params.update(self.get_or_add_user(params))
         sql = '''
@@ -119,7 +138,11 @@ class InventoryDatabase:
         return params.get('order_id')
 
     def add_sale(self, params):
-        # params = {'user_email': 'user@example.com', 'sale_created_at': <date>, 'sale_customer': 'text'}
+        # params = {
+        #   'sale_created_at': <date>,
+        #   'sale_customer': 'text',
+        #   'user_email': 'user@example.com'
+        # }
         params['sale_id'] = uuid.uuid4()
         params.update(self.get_or_add_user(params))
         sql = '''
@@ -130,7 +153,12 @@ class InventoryDatabase:
         return params.get('sale_id')
 
     def add_sample(self, params):
-        # params = {'user_email': 'user@example.com', 'item_name': 'Item', 'item_category': 'Category', 'quantity': 1}
+        # params = {
+        #   'item_category': 'Category',
+        #   'item_name': 'Item',
+        #   'quantity': 1,
+        #   'user_email': 'user@example.com'
+        # }
         params['item_id'] = self.get_or_add_item(params)
         params['sample_id'] = uuid.uuid4()
         sql = 'INSERT INTO samples (sample_id, item_id, quantity) VALUES (%(sample_id)s, %(item_id)s, %(quantity)s)'
@@ -142,7 +170,10 @@ class InventoryDatabase:
         self._u('DROP TYPE IF EXISTS user_level_enum, order_item_status_enum CASCADE')
 
     def delete_item(self, params):
-        # params = {'user_email': 'user@example.com', 'item_id': <uuid>}
+        # params = {
+        #   'item_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             SELECT item_id
             FROM items JOIN users USING (user_id)
@@ -154,21 +185,32 @@ class InventoryDatabase:
         self._u('DELETE FROM items WHERE item_id = %(item_id)s', params)
 
     def delete_item_from_order(self, params):
-        # params = {'order_id': <uuid>, 'user_email': 'user@example.com', 'item_id': <uuid>}
+        # params = {
+        #   'item_id': <uuid>,
+        #   'order_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         if not self._valid_order(params):
             return
 
         self._u('DELETE FROM order_items WHERE order_id = %(order_id)s AND item_id = %(item_id)s', params)
 
     def delete_item_from_sale(self, params):
-        # params = {'sale_id': <uuid>, 'user_email': 'user@example.com', 'item_id': <uuid>}
+        # params = {
+        #   'item_id': <uuid>,
+        #   'sale_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         if not self._valid_sale(params):
             return
 
         self._u('DELETE FROM sale_items WHERE sale_id = %(sale_id)s AND item_id = %(item_id)s', params)
 
     def delete_order(self, params):
-        # params = {'order_id': <uuid>, 'user_email': 'user@example.com'}
+        # params = {
+        #   'order_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             DELETE FROM orders
             WHERE order_id = %(order_id)s
@@ -177,7 +219,10 @@ class InventoryDatabase:
         self._u(sql, params)
 
     def delete_sale(self, params):
-        # params = {'sale_id': <uuid>, 'user_email': 'user@example.com'}
+        # params = {
+        #   'sale_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             DELETE FROM sales
             WHERE sale_id = %(sale_id)s
@@ -186,7 +231,10 @@ class InventoryDatabase:
         self._u(sql, params)
 
     def delete_sample(self, params):
-        # params = {'user_email': 'user@example.com', 'sample_id': <uuid>}
+        # params = {
+        #   'sample_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         if not self._valid_sample(params):
             return
         self._u('DELETE FROM samples WHERE sample_id = %(sample_id)s', params)
@@ -233,7 +281,10 @@ class InventoryDatabase:
         return self._q(sql, params)
 
     def get_item_details(self, params):
-        # params = {'user_email': 'user@example.com', 'item_id': <uuid>}
+        # params = {
+        #   'item_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             SELECT item_id, item_name, item_category
             FROM items JOIN users USING (user_id)
@@ -262,7 +313,11 @@ class InventoryDatabase:
         return item
 
     def get_or_add_item(self, params):
-        # params = {'item_name': 'An item', 'item_category': 'A category', 'user_email': 'user@example.com'}
+        # params = {
+        #   'item_category': 'A category',
+        #   'item_name': 'An item',
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             SELECT item_id FROM items JOIN users USING (user_id)
             WHERE item_name = %(item_name)s AND item_category = %(item_category)s AND user_email = %(user_email)s
@@ -289,7 +344,10 @@ class InventoryDatabase:
         return row
 
     def get_order(self, params):
-        # params = {'user_email': 'user@example.com', 'order_id': <uuid>}
+        # params = {
+        #   'order_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         sql = '''
             SELECT order_id, order_created_at, coalesce(order_note, '') order_note, order_locked
             FROM orders JOIN users USING (user_id)
@@ -335,7 +393,10 @@ class InventoryDatabase:
         return self._q(sql, params)
 
     def get_sale(self, params):
-        # params = {'user_email': 'user@example.com', 'sale_id': <uuid>}
+        # params = {
+        #   'sale_id': <uuid>,
+        #   'user_email': 'user@example.com'
+        # }
         params.update(self.get_or_add_user(params))
         sql = '''
             SELECT sale_id, sale_created_at, sale_customer, sale_paid, sale_delivered
@@ -375,7 +436,9 @@ class InventoryDatabase:
         # params = {'user_email': 'user@example.com'}
         sql = '''
             SELECT sample_id, item_id, item_name, item_category, quantity, sample_used
-            FROM samples JOIN items USING (item_id) JOIN users USING (user_id)
+            FROM samples
+            JOIN items USING (item_id)
+            JOIN users USING (user_id)
             WHERE user_email = %(user_email)s
             ORDER BY sample_used, item_name
         '''
@@ -458,15 +521,24 @@ class InventoryDatabase:
             self._u('INSERT INTO flags (flag_name, flag_int) VALUES (%s, %s)', ['db_version', 1])
 
     def set_order_item_status(self, params):
-        # params = {'user_email': 'user@example.com', 'order_id': <uuid>, 'item_id': <uuid>, 'status': 'received'}
+        # params = {
+        #   'item_id': <uuid>,
+        #   'order_id': <uuid>,
+        #   'status': 'received',
+        #   'user_email': 'user@example.com'
+        # }
         if not self._valid_order(params):
             return
 
-        sql = '''UPDATE order_items SET status = %(status)s WHERE order_id = %(order_id)s AND item_id = %(item_id)s'''
+        sql = 'UPDATE order_items SET status = %(status)s WHERE order_id = %(order_id)s AND item_id = %(item_id)s'
         self._u(sql, params)
 
     def set_order_lock(self, params):
-        # params = {'user_email': 'user@example.com', 'order_id': <uuid>, 'order_locked': True/False}
+        # params = {
+        #   'order_id': <uuid>,
+        #   'order_locked': True/False,
+        #   'user_email': 'user@example.com'
+        # }
         if not self._valid_order(params):
             return
 
@@ -475,7 +547,10 @@ class InventoryDatabase:
 
     def set_order_details(self, params):
         # params = {
-        #   'user_email': 'user@example.com', 'order_id': <uuid>, 'order_created_at': <date>, 'order_note': 'text'
+        #   'order_created_at': <date>,
+        #   'order_id': <uuid>,
+        #   'order_note': 'text',
+        #   'user_email': 'user@example.com'
         # }
         if not self._valid_order(params):
             return
@@ -489,8 +564,12 @@ class InventoryDatabase:
 
     def set_sale_details(self, params):
         # params = {
-        #   'user_email': 'user@example.com', 'sale_id': <uuid>, 'sale_created_at': <date>, 'sale_customer': 'Name',
-        #   'sale_paid': True, 'sale_delivered': True
+        #   'sale_created_at': <date>,
+        #   'sale_customer': 'Name',
+        #   'sale_delivered': True,
+        #   'sale_id': <uuid>,
+        #   'sale_paid': True,
+        #   'user_email': 'user@example.com'
         # }
         sql = '''
             SELECT sale_id
@@ -510,7 +589,11 @@ class InventoryDatabase:
         self._u(sql, params)
 
     def set_sample_used(self, params):
-        # params = {'sample_id': <uuid>, 'user_email': 'user@example.com', 'sample_used': True/False}
+        # params = {
+        #   'sample_id': <uuid>,
+        #   'sample_used': True/False,
+        #   'user_email': 'user@example.com'
+        # }
         if not self._valid_sample(params):
             return
         sql = 'UPDATE samples SET sample_used = %(sample_used)s WHERE sample_id = %(sample_id)s'
