@@ -3,27 +3,23 @@ import flask
 import flask_oauth2_login
 import flask_sslify
 import functools
+import inventory.config
 import inventory.sql
 import logging
-import os
 import sys
 import waitress
 
-log = logging.getLogger(__name__)
+config = inventory.config.Config()
 
 app = flask.Flask(__name__)
 
-DEFAULTS = {
-    'LOG_FORMAT': '%(levelname)s [%(name)s] %(message)s',
-    'LOG_LEVEL': 'DEBUG',
-    'PORT': 8080
-}
+app.config['GOOGLE_LOGIN_CLIENT_ID'] = config.google_login_client_id
+app.config['GOOGLE_LOGIN_CLIENT_SECRET'] = config.google_login_client_secret
+app.config['GOOGLE_LOGIN_REDIRECT_SCHEME'] = config.scheme
+app.config['PREFERRED_URL_SCHEME'] = config.scheme
+app.config['SECRET_KEY'] = config.secret_key
 
-for key in ['ADMIN_EMAIL', 'DSN', 'GOOGLE_LOGIN_CLIENT_ID', 'GOOGLE_LOGIN_CLIENT_SECRET',
-            'GOOGLE_LOGIN_REDIRECT_SCHEME', 'LOG_FORMAT', 'LOG_LEVEL', 'PORT', 'SECRET_KEY', 'UNIX_SOCKET']:
-    app.config[key] = os.environ.get(key, DEFAULTS.get(key))
-
-if app.config.get('GOOGLE_LOGIN_REDIRECT_SCHEME').lower() == 'https':
+if config.scheme.lower() == 'https':
     sslify = flask_sslify.SSLify(app)
 
 google_login = flask_oauth2_login.GoogleLogin(app)
@@ -32,13 +28,13 @@ google_login = flask_oauth2_login.GoogleLogin(app)
 @google_login.login_success
 def login_success(_, profile):
     flask.session['profile'] = profile
-    log.debug('Google login success')
+    app.logger.debug('Google login success')
     return flask.redirect(flask.url_for('index'))
 
 
 @google_login.login_failure
 def login_failure(e):
-    log.debug(f'Google login failure: {e}')
+    app.logger.debug(f'Google login failure: {e}')
     return flask.jsonify(errors=str(e))
 
 
@@ -55,7 +51,7 @@ def login_required(f):
 def _get_db():
     _db = flask.g.get('_db')
     if _db is None:
-        _db = inventory.sql.InventoryDatabase(app.config.get('DSN'))
+        _db = inventory.sql.InventoryDatabase(config.dsn)
         flask.g._db = _db
     return _db
 
@@ -359,10 +355,14 @@ def sign_out():
 
 
 def main():
-    logging.basicConfig(format=app.config['LOG_FORMAT'], level=app.config['LOG_LEVEL'], stream=sys.stdout)
+    logging.basicConfig(format=config.log_format, level='DEBUG', stream=sys.stdout)
+    app.logger.debug(f'Changing log level to {config.log_level}')
+    logging.getLogger().setLevel(config.log_level)
+
     with app.app_context():
         _get_db().migrate()
-    if app.config['UNIX_SOCKET']:
-        waitress.serve(app, unix_socket=app.config['UNIX_SOCKET'], unix_socket_perms='666')
+
+    if config.unix_socket:
+        waitress.serve(app, unix_socket=config.unix_socket, unix_socket_perms='666')
     else:
-        waitress.serve(app, port=app.config['PORT'])
+        waitress.serve(app, port=config.port)
