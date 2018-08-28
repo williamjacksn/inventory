@@ -30,7 +30,7 @@ the connection string for the database, for example:
 
 **Inventory** requires at least Python 3.6. You can install from PyPI:
 
-    pip install inventory==3.0.0
+    pip install inventory
 
 Installation will add the `inventory` command to your path.
 
