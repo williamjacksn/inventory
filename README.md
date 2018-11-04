@@ -26,18 +26,11 @@ the connection string for the database, for example:
 
 *   `DSN=postgresql://username:password@hostname:port/databasename`.
 
-### 3. Install
-
-**Inventory** requires at least Python 3.6. You can install from PyPI:
-
-    pip install inventory
-
-Installation will add the `inventory` command to your path.
-
-### 4. Environment variables
+### 3. Environment variables
 
 Here are all the environment variables **Inventory** needs to run, including those already mentioned.
 
+*   `ADMIN_EMAIL`
 *   `DSN` (PostgreSQL connection string)
 *   `GOOGLE_LOGIN_CLIENT_ID`
 *   `GOOGLE_LOGIN_CLIENT_SECRET`
@@ -49,19 +42,14 @@ variable to the port number you want to listen on, for example:
 
 *   `PORT=8088`
 
-If you want to listen on a Unix socket instead of a TCP port, set the environment variable `UNIX_SOCKET` to
-the path of the socket, for example:
-
-*   `UNIX_SOCKET=/var/run/inventory.socket`
-
-If `UNIX_SOCKET` and `PORT` are both set, `UNIX_SOCKET` will take priority.
-
 **Inventory** uses Python's logging module to send logs to `stdout`. You can customize the log format and level with the
 `LOG_FORMAT` and `LOG_LEVEL` environment variables. Defaults are:
 
 *   `LOG_FORMAT="%(levelname)s [%(name)s] %(message)s"`
 *   `LOG_LEVEL=DEBUG`
 
-### 5. Launch
+### 4. Launch
 
-With environment variables set as explained, Launch the web app with the command `inventory`.
+**Inventory** can be launched using Docker:
+
+    docker container run -p 8080:8080 -e DSN=... -e ... williamjackson/inventory

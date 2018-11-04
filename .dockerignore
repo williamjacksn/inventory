@@ -1,8 +1,6 @@
-.dockerignore
 .git
 .gitignore
 .idea
-Dockerfile
 MANIFEST.in
 docker-compose.yml
 docker-compose.override.yml

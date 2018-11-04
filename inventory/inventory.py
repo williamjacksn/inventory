@@ -362,7 +362,4 @@ def main():
     with app.app_context():
         _get_db().migrate()
 
-    if config.unix_socket:
-        waitress.serve(app, unix_socket=config.unix_socket, unix_socket_perms='666')
-    else:
-        waitress.serve(app, port=config.port)
+    waitress.serve(app, port=config.port)

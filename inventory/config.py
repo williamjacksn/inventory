@@ -11,7 +11,6 @@ class Config:
     port: int
     scheme: str
     secret_key: str
-    unix_socket: str
 
     def __init__(self):
         self.admin_email = os.getenv('ADMIN_EMAIL')
@@ -23,4 +22,3 @@ class Config:
         self.port = int(os.getenv('PORT', '8080'))
         self.scheme = os.getenv('SCHEME', 'http')
         self.secret_key = os.getenv('SECRET_KEY')
-        self.unix_socket = os.getenv('UNIX_SOCKET')
