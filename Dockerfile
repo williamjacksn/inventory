@@ -17,4 +17,4 @@ HEALTHCHECK CMD ["/usr/bin/wget", "--spider", "--quiet", "localhost:8080"]
 
 LABEL maintainer=william@subtlecoolness.com \
       org.label-schema.schema-version=1.0 \
-      org.label-schema.version=3.1.2
+      org.label-schema.version=3.2.0
