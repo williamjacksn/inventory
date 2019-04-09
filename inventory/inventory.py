@@ -1,26 +1,24 @@
 import datetime
 import flask
 import flask_oauth2_login
-import flask_sslify
 import functools
 import inventory.config
 import inventory.sql
 import logging
 import sys
 import waitress
+import werkzeug.middleware.proxy_fix
 
 config = inventory.config.Config()
 
 app = flask.Flask(__name__)
+app.wsgi_app = werkzeug.middleware.proxy_fix.ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_port=1)
 
 app.config['GOOGLE_LOGIN_CLIENT_ID'] = config.google_login_client_id
 app.config['GOOGLE_LOGIN_CLIENT_SECRET'] = config.google_login_client_secret
 app.config['GOOGLE_LOGIN_REDIRECT_SCHEME'] = config.scheme
 app.config['PREFERRED_URL_SCHEME'] = config.scheme
 app.config['SECRET_KEY'] = config.secret_key
-
-if config.scheme.lower() == 'https':
-    sslify = flask_sslify.SSLify(app)
 
 google_login = flask_oauth2_login.GoogleLogin(app)
 

@@ -13,6 +13,7 @@ ENV PYTHONUNBUFFERED 1
 
 ENTRYPOINT ["/usr/local/bin/python"]
 CMD ["/inventory/run.py"]
+HEALTHCHECK CMD ["/usr/bin/wget", "--spider", "--quiet", "localhost:8080"]
 
 LABEL maintainer=william@subtlecoolness.com \
       org.label-schema.schema-version=1.0 \

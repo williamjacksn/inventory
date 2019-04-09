@@ -1,7 +1,6 @@
 .git
 .gitignore
 .idea
-MANIFEST.in
 docker-compose.yml
 docker-compose.override.yml
 todo.txt
