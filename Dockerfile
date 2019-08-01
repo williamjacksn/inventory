@@ -15,6 +15,6 @@ ENTRYPOINT ["/usr/local/bin/python"]
 CMD ["/inventory/run.py"]
 HEALTHCHECK CMD ["/usr/bin/wget", "--spider", "--quiet", "localhost:8080"]
 
-LABEL maintainer=william@subtlecoolness.com \
-      org.label-schema.schema-version=1.0 \
-      org.label-schema.version=3.2.0
+LABEL org.opencontainers.image.authors="William Jackson <william@subtlecoolness.com>" \
+      org.opencontainers.image.source="https://github.com/williamjacksn/inventory" \
+      org.opencontainers.image.version=3.2.0
