@@ -9,7 +9,7 @@ RUN /sbin/apk add --no-cache --virtual .deps gcc musl-dev postgresql-dev \
 
 COPY . /inventory
 
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED="1"
 
 ENTRYPOINT ["/usr/local/bin/python"]
 CMD ["/inventory/run.py"]
