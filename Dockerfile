@@ -17,4 +17,4 @@ HEALTHCHECK CMD ["/usr/bin/wget", "--spider", "--quiet", "localhost:8080"]
 
 LABEL org.opencontainers.image.authors="William Jackson <william@subtlecoolness.com>" \
       org.opencontainers.image.source="https://github.com/williamjacksn/inventory" \
-      org.opencontainers.image.version=3.2.0
+      org.opencontainers.image.version=3.2.1
