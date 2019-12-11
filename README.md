@@ -21,9 +21,10 @@ When setting up the OAuth 2.0 client with your provider, set the redirect URI to
 `http://localhost:8080/authorize`.
 
 You will also need to set the URL of the OpenID discovery document for your OpenID provider in the environment variable
-`OPENID_DISCOVERY_DOCUMENT`. Here are some common discovery document locations:
+`OPENID_DISCOVERY_DOCUMENT`. Here are some common discovery document locations that have been tested with this
+application:
 
-* Sign in with a Google account: https://accounts.google.com/.well-known/openid-configuration.
+* Sign in with a Google account: https://accounts.google.com/.well-known/openid-configuration
 * Sign in with a Microsoft account: https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
 
 If you plan to serve the application over HTTPS, set the environment variable `SCHEME` to `https`. Otherwise, set it to
