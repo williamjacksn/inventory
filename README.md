@@ -10,11 +10,15 @@
 
 ## Setup
 
-### 1. Google Sign-In
+### 1. OpenID Sign-In
 
-**Inventory** uses Google Sign-In for authentication. You will need to use the
-[Google Cloud Console](https://console.cloud.google.com/apis/credentials) to generate an OAuth 2.0 client ID and secret.
-Save these values in the environment variables `GOOGLE_LOGIN_CLIENT_ID` and `GOOGLE_LOGIN_CLIENT_SECRET`.
+**Inventory** uses OpenID Sign-In for authentication. You will need to use an OpenID provider (like Google) to generate
+an OAuth 2.0 client ID and secret. Save these values in the environment variables `OPENID_CLIENT_ID` and
+`OPENID_CLIENT_SECRET`.
+
+You will also need to set the URL of the OpenID discovery document for your OpenID provider in the environment variable
+`OPENID_DISCOVERY_DOCUMENT`. For example, the OpenID discovery document for Google Sign-In is
+https://accounts.google.com/.well-known/openid-configuration.
 
 If you plan to serve the application over HTTPS, set the environment variable `SCHEME` to `https`. Otherwise, set it to
 `http`.
@@ -32,8 +36,9 @@ Here are all the environment variables **Inventory** needs to run, including tho
 
 *   `ADMIN_EMAIL`
 *   `DSN` (PostgreSQL connection string)
-*   `GOOGLE_LOGIN_CLIENT_ID`
-*   `GOOGLE_LOGIN_CLIENT_SECRET`
+*   `OPENID_CLIENT_ID`
+*   `OPENID_CLIENT_SECRET`
+*   `OPENID_DISCOVERY_DOCUMENT`
 *   `SCHEME` (either `http` or `https`)
 *   `SECRET_KEY` (a random string used for secure cookies)
 
