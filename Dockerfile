@@ -9,7 +9,8 @@ RUN /sbin/apk add --no-cache --virtual .deps gcc musl-dev postgresql-dev \
 
 COPY . /inventory
 
-ENV PYTHONUNBUFFERED="1"
+ENV APP_VERSION="3.2.1" \
+    PYTHONUNBUFFERED="1"
 
 ENTRYPOINT ["/usr/local/bin/python"]
 CMD ["/inventory/run.py"]
@@ -17,4 +18,4 @@ HEALTHCHECK CMD ["/usr/bin/wget", "--spider", "--quiet", "localhost:8080"]
 
 LABEL org.opencontainers.image.authors="William Jackson <william@subtlecoolness.com>" \
       org.opencontainers.image.source="https://github.com/williamjacksn/inventory" \
-      org.opencontainers.image.version=3.2.1
+      org.opencontainers.image.version="${APP_VERSION}"
