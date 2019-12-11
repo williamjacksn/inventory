@@ -10,18 +10,29 @@
 
 ## Setup
 
-### 1. OpenID Sign-In
+### 1. OpenID Connect
 
-**Inventory** uses OpenID Sign-In for authentication. You will need to use an OpenID provider (like Google) to generate
+**Inventory** uses OpenID Connect for authentication. You will need to use an OpenID provider (like Google) to generate
 an OAuth 2.0 client ID and secret. Save these values in the environment variables `OPENID_CLIENT_ID` and
 `OPENID_CLIENT_SECRET`.
 
+When setting up the OAuth 2.0 client with your provider, set the redirect URI to
+`https://<web-app-domain-name>/authorize`. If you are testing this application locally, you can set the redirect URI to
+`http://localhost:8080/authorize`.
+
 You will also need to set the URL of the OpenID discovery document for your OpenID provider in the environment variable
-`OPENID_DISCOVERY_DOCUMENT`. For example, the OpenID discovery document for Google Sign-In is
-https://accounts.google.com/.well-known/openid-configuration.
+`OPENID_DISCOVERY_DOCUMENT`. Here are some common discovery document locations:
+
+* Sign in with a Google account: https://accounts.google.com/.well-known/openid-configuration.
+* Sign in with a Microsoft account: https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
 
 If you plan to serve the application over HTTPS, set the environment variable `SCHEME` to `https`. Otherwise, set it to
-`http`.
+`http`. Most OpenID providers require the application to be served over HTTPS. The author recommends you serve this
+application behind a reverse proxy that provides SSL termination, such as [Caddy][a]. [Nginx][b], or [Traefik][c].
+
+[a]: https://caddyserver.com/
+[b]: https://www.nginx.com/
+[c]: https://docs.traefik.io/
 
 ### 2. Database
 
