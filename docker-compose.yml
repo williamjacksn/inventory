@@ -2,5 +2,15 @@ version: '3'
 
 services:
   inventory:
-    build: .
     image: williamjackson/inventory
+    build: .
+    environment:
+      DSN: postgres://postgres:postgres@postgres/postgres
+      OPENID_CLIENT_ID: (set in docker-compose.yml)
+      OPENID_CLIENT_SECRET: (set in docker-compose.yml)
+      OPENID_DISCOVERY_DOCUMENT: (set in docker-compose.yml)
+
+  postgres:
+    image: postgres:10.7-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
