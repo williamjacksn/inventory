@@ -1,6 +1,6 @@
 build
 dist
-docker-compose.override.yml
+docker-compose.override.yaml
 .idea
 inventory.egg-info
 __pycache__

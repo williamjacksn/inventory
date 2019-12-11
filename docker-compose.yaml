@@ -6,9 +6,9 @@ services:
     build: .
     environment:
       DSN: postgres://postgres:postgres@postgres/postgres
-      OPENID_CLIENT_ID: (set in docker-compose.yml)
-      OPENID_CLIENT_SECRET: (set in docker-compose.yml)
-      OPENID_DISCOVERY_DOCUMENT: (set in docker-compose.yml)
+      OPENID_CLIENT_ID: (set in docker-compose.override.yaml)
+      OPENID_CLIENT_SECRET: (set in docker-compose.override.yaml)
+      OPENID_DISCOVERY_DOCUMENT: (set in docker-compose.override.yaml)
 
   postgres:
     image: postgres:10.7-alpine
