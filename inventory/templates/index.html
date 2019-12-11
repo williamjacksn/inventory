@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
 
 {% block sign_in %}
-    <a class="btn btn-primary btn-block" href="{{ g.sign_in_url }}"><span class="glyphicon glyphicon-user"></span></a>
+    <a class="btn btn-primary btn-block" href="{{ url_for('sign_in') }}"><span class="glyphicon glyphicon-user"></span></a>
 {% endblock %}

@@ -6,7 +6,7 @@
             <span class="glyphicon glyphicon-user"></span> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li class="dropdown-header">{{ session.profile.email }}</li>
+            <li class="dropdown-header">{{ session.email }}</li>
             <li><a href="{{ url_for('sign_out') }}">Sign out</a></li>
         </ul>
     </div>
