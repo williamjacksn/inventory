@@ -9,7 +9,7 @@ RUN /sbin/apk add --no-cache --virtual .deps gcc musl-dev postgresql-dev \
 
 COPY . /inventory
 
-ENV APP_VERSION="4.0.1" \
+ENV APP_VERSION="4.0.2" \
     PYTHONUNBUFFERED="1"
 
 ENTRYPOINT ["/usr/local/bin/python"]
