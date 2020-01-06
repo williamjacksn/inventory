@@ -3,4 +3,4 @@ PyJWT==1.7.1
 Werkzeug==0.16.0
 psycopg2==2.8.4
 requests==2.22.0
-waitress==1.4.1
+waitress==1.4.2
