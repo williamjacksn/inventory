@@ -69,4 +69,4 @@ variable to the port number you want to listen on, for example:
 
 **Inventory** can be launched using Docker:
 
-    docker container run -p 8080:8080 -e DSN=... -e ... williamjackson/inventory
+    docker container run -p 8080:8080 -e DSN=... -e ... docker.pkg.github.com/williamjacksn/inventory/inventory
