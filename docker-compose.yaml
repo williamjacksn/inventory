@@ -1,8 +1,8 @@
-version: '3'
+version: '3.7'
 
 services:
   inventory:
-    image: williamjackson/inventory
+    image: docker.pkg.github.com/williamjacksn/inventory/inventory
     build: .
     environment:
       DSN: postgres://postgres:postgres@postgres/postgres
@@ -11,6 +11,6 @@ services:
       OPENID_DISCOVERY_DOCUMENT: (set in docker-compose.override.yaml)
 
   postgres:
-    image: postgres:10.7-alpine
+    image: postgres:11.6-alpine
     environment:
       POSTGRES_PASSWORD: postgres
