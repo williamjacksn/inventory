@@ -1,28 +1,41 @@
-name: Build the release container image
+name: Build the container image
 
 on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
   release:
-    types: [published]
+    types:
+      - published
 
 jobs:
 
   build:
-    name: Build the release container image
+    name: Build the container image
     runs-on: ubuntu-latest
     steps:
-    - name: Check out the repository
-      uses: actions/checkout@v1
-    - name: Log in to the registry
-      run: docker login --password "${{ secrets.GITHUB_TOKEN }}" --username "${GITHUB_ACTOR}" docker.pkg.github.com
-    - name: Get the release tag
-      id: get-release-tag
-      run: echo ::set-output name=release-tag::${GITHUB_REF/refs\/tags\//}
-    - name: Set the container image name
-      id: set-image-name
-      run: echo ::set-output name=image-name::docker.pkg.github.com/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${{ steps.get-release-tag.outputs.release-tag }}
-      env:
-        IMAGE_NAME: inventory
-    - name: Build the container image
-      run: docker build --file Dockerfile --tag ${{ steps.set-image-name.outputs.image-name }} .
-    - name: Push the image to the registry
-      run: docker image push ${{ steps.set-image-name.outputs.image-name }}
+
+      - name: Check out the repository
+        uses: actions/checkout@v2.3.2
+
+      - name: Build the container image
+        uses: docker/build-push-action@v1.1.0
+        with:
+          repository: inventory
+
+      # This build will be fast because it will use the cache created in the previous step
+      # On a 'push' event, the image tag will be 'latest'
+      # On a 'release' event, the image tag will be the release tag
+      - name: Tag and push the image
+        if: github.event_name == 'push' || github.event_name == 'release'
+        uses: docker/build-push-action@v1.1.0
+        with:
+          repository: ${{ github.repository }}/inventory
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          tag_with_ref: true
+          add_git_labels: true
