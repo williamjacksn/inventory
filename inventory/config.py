@@ -19,7 +19,7 @@ class Config:
         self.openid_client_id = os.getenv('OPENID_CLIENT_ID')
         self.openid_client_secret = os.getenv('OPENID_CLIENT_SECRET')
         self.log_format = os.getenv('LOG_FORMAT', '%(levelname)s [%(name)s] %(message)s')
-        self.log_level = os.getenv('LOG_LEVEL', 'DEBUG')
+        self.log_level = os.getenv('LOG_LEVEL', 'INFO')
         self.openid_discovery_document = os.getenv('OPENID_DISCOVERY_DOCUMENT')
         self.port = int(os.getenv('PORT', '8080'))
         self.scheme = os.getenv('SCHEME', 'http')

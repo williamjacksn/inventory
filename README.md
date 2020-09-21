@@ -63,7 +63,7 @@ variable to the port number you want to listen on, for example:
 `LOG_FORMAT` and `LOG_LEVEL` environment variables. Defaults are:
 
 *   `LOG_FORMAT="%(levelname)s [%(name)s] %(message)s"`
-*   `LOG_LEVEL=DEBUG`
+*   `LOG_LEVEL=INFO`
 
 ### 4. Launch
 
