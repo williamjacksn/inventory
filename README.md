@@ -8,6 +8,9 @@
 *   *Sales* are used to decrease your item inventory levels
 *   *Samples* are used to decrease your saleable inventory without actually making a sale
 
+**Inventory** is multi-tenant but single-user. Anyone can sign in to the application, but each person that signs in will
+only see their own data. No data is shared between users.
+
 ## Setup
 
 ### 1. OpenID Connect
