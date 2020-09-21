@@ -10,8 +10,9 @@ COPY . /inventory
 ENV APP_VERSION="2020.3" \
     PYTHONUNBUFFERED="1"
 
+WORKDIR /inventory
 ENTRYPOINT ["/usr/local/bin/python"]
-CMD ["/inventory/inventory/inventory.py"]
+CMD ["/inventory/inventory/app.py"]
 HEALTHCHECK CMD ["/usr/bin/wget", "--spider", "--quiet", "localhost:8080"]
 
 LABEL org.opencontainers.image.authors="William Jackson <william@subtlecoolness.com>" \
