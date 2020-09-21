@@ -11,9 +11,11 @@ ENV APP_VERSION="2020.3" \
     PYTHONUNBUFFERED="1"
 
 ENTRYPOINT ["/usr/local/bin/python"]
-CMD ["/inventory/run.py"]
+CMD ["/inventory/inventory/inventory.py"]
 HEALTHCHECK CMD ["/usr/bin/wget", "--spider", "--quiet", "localhost:8080"]
 
 LABEL org.opencontainers.image.authors="William Jackson <william@subtlecoolness.com>" \
       org.opencontainers.image.source="https://github.com/williamjacksn/inventory" \
       org.opencontainers.image.version="${APP_VERSION}"
+
+USER nobody

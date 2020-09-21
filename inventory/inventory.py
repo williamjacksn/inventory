@@ -6,6 +6,7 @@ import inventory.sql
 import jwt
 import logging
 import requests
+import signal
 import sys
 import urllib.parse
 import uuid
@@ -388,3 +389,12 @@ def main():
         _get_db().migrate()
 
     waitress.serve(app, port=config.port)
+
+
+def handle_sigterm(_signal, _frame):
+    sys.exit()
+
+
+if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, handle_sigterm)
+    main()
