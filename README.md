@@ -29,7 +29,7 @@ application:
 
 If you plan to serve the application over HTTPS, set the environment variable `SCHEME` to `https`. Otherwise, set it to
 `http`. Most OpenID providers require the application to be served over HTTPS. The author recommends you serve this
-application behind a reverse proxy that provides SSL termination, such as [Caddy][a]. [Nginx][b], or [Traefik][c].
+application behind a reverse proxy that provides SSL termination, such as [Caddy][a], [Nginx][b], or [Traefik][c].
 
 [a]: https://caddyserver.com/
 [b]: https://www.nginx.com/
