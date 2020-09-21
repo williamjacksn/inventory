@@ -380,7 +380,12 @@ def sign_out():
     return flask.redirect(flask.url_for('index'))
 
 
+def handle_sigterm(_signal, _frame):
+    sys.exit()
+
+
 def main():
+    signal.signal(signal.SIGTERM, handle_sigterm)
     logging.basicConfig(format=config.log_format, level='DEBUG', stream=sys.stdout)
     app.logger.debug(f'Changing log level to {config.log_level}')
     logging.getLogger().setLevel(config.log_level)
@@ -391,10 +396,5 @@ def main():
     waitress.serve(app, port=config.port)
 
 
-def handle_sigterm(_signal, _frame):
-    sys.exit()
-
-
 if __name__ == '__main__':
-    signal.signal(signal.SIGTERM, handle_sigterm)
     main()
