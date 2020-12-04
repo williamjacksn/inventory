@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   inventory:
-    image: docker.pkg.github.com/williamjacksn/inventory/inventory
+    image: ghcr.io/williamjacksn/inventory
     environment:
       DSN: postgres://postgres:postgres@postgres/postgres
       OPENID_CLIENT_ID: (set in docker-compose.override.yaml)
