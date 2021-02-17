@@ -10,7 +10,7 @@ services:
       OPENID_DISCOVERY_DOCUMENT: (set in docker-compose.override.yaml)
 
   postgres:
-    image: postgres:11.9-alpine
+    image: postgres:11.11-alpine
     environment:
       POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data/11
