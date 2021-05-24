@@ -1,5 +1,5 @@
 --extra-index-url https://alpine-wheels.github.io/index/
-Flask==2.0.0
+Flask==2.0.1
 PyJWT==2.1.0
 Werkzeug==2.0.1
 psycopg2==2.8.6
