@@ -1,0 +1,8 @@
+--extra-index-url https://alpine-wheels.github.io/index
+
+flask
+psycopg2
+pyjwt
+requests
+waitress
+werkzeug
