@@ -1,6 +1,7 @@
 services:
   inventory:
     image: ghcr.io/williamjacksn/inventory
+    init: true
     environment:
       DSN: postgres://postgres:postgres@postgres/postgres
       OPENID_CLIENT_ID: (set in docker-compose.override.yaml)
