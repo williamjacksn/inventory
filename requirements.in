@@ -5,4 +5,3 @@ psycopg2
 pyjwt
 requests
 waitress
-werkzeug
