@@ -26,7 +26,7 @@ jobs:
         run: pip-compile --upgrade
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v3.12.1
+        uses: peter-evans/create-pull-request@v3.14.0
         with:
           body: Upgrade all dependencies with `pip-compile --upgrade`
           branch: pip-compile-upgrade
