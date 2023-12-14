@@ -1,4 +1,4 @@
-FROM python:3.11.0-alpine3.15
+FROM python:3.11.7-alpine3.19
 
 RUN /sbin/apk add --no-cache libpq
 RUN /usr/sbin/adduser -g python -D python
