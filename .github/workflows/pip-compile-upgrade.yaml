@@ -2,7 +2,7 @@ name: Upgrade all requirements
 
 on:
   schedule:
-    - cron: '45 21 * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:
@@ -17,7 +17,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10.2'
+          cache: pip
+          python-version: '3.11'
 
       - name: Install pip-tools
         run: pip install pip-tools
