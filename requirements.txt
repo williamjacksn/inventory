@@ -30,7 +30,7 @@ pyjwt==2.3.0
     # via -r requirements.in
 requests==2.31.0
     # via -r requirements.in
-urllib3==1.26.9
+urllib3==1.26.18
     # via requests
 waitress==2.1.2
     # via -r requirements.in
