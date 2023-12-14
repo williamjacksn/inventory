@@ -21,7 +21,9 @@ itsdangerous==2.1.2
 jinja2==3.1.1
     # via flask
 markupsafe==2.1.1
-    # via jinja2
+    # via
+    #   jinja2
+    #   werkzeug
 psycopg2==2.9.3
     # via -r requirements.in
 pyjwt==2.3.0
@@ -32,5 +34,5 @@ urllib3==1.26.9
     # via requests
 waitress==2.1.1
     # via -r requirements.in
-werkzeug==2.1.0
+werkzeug==2.3.8
     # via flask
